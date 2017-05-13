@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Wheel</string>
+    <string name="title_activity_login">Welcome to Wheel!</string>
+    <string name="title_activity_register">Make an Account!</string>
+</resources>

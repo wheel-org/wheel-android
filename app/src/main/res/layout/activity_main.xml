@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="me.felixguo.expenses.MainActivity"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Intro"
+            android:id="@+id/introText"
+            android:textSize="24sp"
+            android:textStyle="normal|bold" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/leftProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:progress="20"
+                android:progressTint="@android:color/holo_orange_dark"
+                android:rotation="180" />
+
+            <ProgressBar
+                android:id="@+id/rightProgress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:indeterminate="false"
+                android:max="100"
+                android:progress="10"
+                android:progressTint="@color/colorPrimary" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/leftDisp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$1000" />
+
+            <TextView
+                android:id="@+id/felixLabel"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Felix\n$0.00"
+                android:layout_gravity="start"
+                android:textAlignment="textEnd"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/centerArrow"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="▲"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/michaelLabel"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="Michael\n$0.00"
+                android:textAlignment="viewStart"
+                android:layout_gravity="start"
+                android:textSize="15sp"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/rightDisp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="$1000"
+                android:layout_gravity="end"
+                android:textAlignment="textEnd" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/priceInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:ellipsize="end"
+                android:ems="10"
+                android:hint="$0.00"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/black"
+                android:textStyle="normal|bold" />
+
+            <EditText
+                android:id="@+id/descInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:ems="10"
+                android:hint="Uber"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/sendTransactionBtn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:onClick="submitTransaction"
+                android:text="Push" />
+
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/swipe_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ListView
+                android:id="@+id/pastTransactions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
+    <ListView android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#111"/>
+
+</android.support.v4.widget.DrawerLayout>

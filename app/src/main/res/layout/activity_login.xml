@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="me.felixguo.expenses.LoginActivity">
+    tools:context="org.wheel.expenses.LoginActivity">
 
     <!-- Login progress -->
 
@@ -40,10 +40,10 @@
 
 
         <CheckBox
-            android:id="@+id/saveLogin"
+            android:id="@+id/save_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Save my details and auto-login!" />
+            android:text="Save my details and auto-login!"/>
 
         <Button
             android:id="@+id/signin"
@@ -51,8 +51,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:onClick="LoginClick"
             android:text="Sign In"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <Button
             android:id="@+id/goToRegister"

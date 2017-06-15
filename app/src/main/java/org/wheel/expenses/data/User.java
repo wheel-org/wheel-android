@@ -17,6 +17,7 @@ public class User {
             mUsername = object.getString("username");
             mName = object.getString("name");
             JSONArray rooms = object.getJSONArray("rooms");
+            mActiveRooms = new ArrayList<>();
             for (int i = 0; i < rooms.length(); i++) {
                 mActiveRooms.add(new RoomInfo(rooms.getJSONObject(i)));
             }
@@ -31,5 +32,9 @@ public class User {
 
     public String getUsername() {
         return mUsername;
+    }
+
+    public ArrayList<RoomInfo> getActiveRooms() {
+        return mActiveRooms;
     }
 }

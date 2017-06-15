@@ -3,10 +3,11 @@
     <string name="title_activity_login">Welcome to Wheel!</string>
     <string name="title_activity_register">Make an Account!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-    <string name="title_activity_splash_screen">SplashScreen</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="splash_connect_to_server_loading_text">Connecting to the
+        server...
+    </string>
+    <string name="drawer_open">Drawer Open</string>
+    <string name="drawer_close">Drawer Close</string>
+    <string name="drawer_logged_in">Logged in as %1$s.</string>
+    <string name="price_display">$ %1$.02f</string>
 </resources>

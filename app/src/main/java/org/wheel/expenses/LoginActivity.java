@@ -1,9 +1,8 @@
 package org.wheel.expenses;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -60,6 +59,7 @@ public class LoginActivity extends AppCompatActivity {
             mUsername.setText(storedUsername);
         }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REGISTER_RESULT) {
@@ -69,9 +69,11 @@ public class LoginActivity extends AppCompatActivity {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
     public void LoginClick(View v) {
         attemptLogin(mUsername.getText().toString(), mPassword.getText().toString());
     }
+
     private void attemptLogin(String username, String password) {
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("username", username);
@@ -93,8 +95,7 @@ public class LoginActivity extends AppCompatActivity {
                     StoredPreferencesManager.getInstance(getApplicationContext())
                             .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDPASSWORD,
                                     WheelAPI.hashPassword(mPassword.getText().toString()));
-                }
-                else {
+                } else {
                     StoredPreferencesManager.getInstance(getApplicationContext())
                             .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDUSERNAME, "");
                     StoredPreferencesManager.getInstance(getApplicationContext())
@@ -104,6 +105,11 @@ public class LoginActivity extends AppCompatActivity {
                 WheelAPI.getInstance().ShowToast("Logging in!");
                 ApplicationStateManager.getInstance().setCurrentUser(new User(response));
                 startMain();
+            }
+
+            @Override
+            public void onConnectionError() {
+                WheelAPI.getInstance().ShowToast(WheelAPI.CONNECTION_FAIL);
             }
         });
     }

@@ -21,4 +21,12 @@ public class RoomInfo {
             e.printStackTrace();
         }
     }
+
+    public String getName() {
+        return mName;
+    }
+
+    public double getBalanceByUser() {
+        return mBalanceByUser;
+    }
 }

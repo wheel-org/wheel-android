@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.wheel.expenses">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.wheel.expenses">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -14,24 +15,24 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"/>
+        android:theme="@style/WheelTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="Wheel"
+            android:theme="@style/WheelTheme.NoActionBar"/>
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
         </activity>
         <activity
             android:name=".RegisterActivity"
-            android:label="@string/title_activity_register"
-            android:theme="@style/AppTheme"/>
+            android:label="@string/title_activity_register"/>
         <activity
             android:name=".SplashScreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="Wheel"
-            android:theme="@style/AppTheme">
+            android:theme="@style/WheelTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

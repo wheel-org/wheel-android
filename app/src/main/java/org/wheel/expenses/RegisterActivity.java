@@ -47,8 +47,7 @@ public class RegisterActivity extends AppCompatActivity {
                         StoredPreferencesManager.getInstance(getApplicationContext())
                                 .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDPASSWORD,
                                         WheelAPI.hashPassword(mPassword.getText().toString()));
-                    }
-                    else {
+                    } else {
                         StoredPreferencesManager.getInstance(getApplicationContext())
                                 .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDUSERNAME, "");
                         StoredPreferencesManager.getInstance(getApplicationContext())
@@ -58,9 +57,15 @@ public class RegisterActivity extends AppCompatActivity {
                     setResult(Activity.RESULT_OK, null);
                     finish(); //finish the startNewOne activity
                 }
+
+                @Override
+                public void onConnectionError() {
+                    WheelAPI.getInstance().ShowToast(WheelAPI.CONNECTION_FAIL);
+                }
             });
         }
     }
+
     private boolean verify() {
         boolean allRight = true;
         mPotentialError.setText("");
@@ -70,14 +75,14 @@ public class RegisterActivity extends AppCompatActivity {
                 mPassword.getText().toString().isEmpty() ||
                 mPasswordAgain.getText().toString().isEmpty()) {
             allRight = false;
-        }
-        else if (!mPassword.getText().toString().equals(mPasswordAgain.getText().toString())) {
+        } else if (!mPassword.getText().toString().equals(mPasswordAgain.getText().toString())) {
             mPotentialError.setText("Passwords do not match!");
             mPotentialError.setVisibility(View.VISIBLE);
             allRight = false;
         }
         return allRight;
     }
+
     public TextWatcher TextChangeWatch = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -88,8 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
         public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             if (verify()) {
                 mRegister.setEnabled(true);
-            }
-            else {
+            } else {
                 mRegister.setEnabled(false);
             }
         }
@@ -99,6 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

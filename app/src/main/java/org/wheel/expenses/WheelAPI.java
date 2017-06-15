@@ -6,16 +6,13 @@ import android.content.pm.PackageManager;
 import android.net.http.AndroidHttpClient;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.apache.http.auth.AUTH;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,32 +22,34 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.android.volley.Request.Method.*;
+import static com.android.volley.Request.Method.DELETE;
+import static com.android.volley.Request.Method.GET;
+import static com.android.volley.Request.Method.POST;
 
-/**
- * Created by Felix on 5/6/2017.
- */
 
 public class WheelAPI {
     public enum ApiCall {
         UserAuth, UserRegister, RoomAuth, RoomRequest, RoomCreate,
         AddTransaction, DeleteTransaction, AuthCheck
-    };
+    }
 
-    public static final String userAuthURL =        "https://wheel-app.herokuapp.com/login";
-    public static final String userRegisterURL =    "https://wheel-app.herokuapp.com/register";
-    public static final String roomAuthURL =        "https://wheel-app.herokuapp.com/register";
-    public static final String roomRequestURL =     "https://wheel-app.herokuapp.com/";
-    public static final String roomCreateURL =      "https://wheel-app.herokuapp.com/";
-    public static final String addTransactionURL =  "https://wheel-app.herokuapp.com/";
+    ;
+
+    public static final String userAuthURL = "https://wheel-app.herokuapp.com/login";
+    public static final String userRegisterURL = "https://wheel-app.herokuapp.com/register";
+    public static final String roomAuthURL = "https://wheel-app.herokuapp.com/register";
+    public static final String roomRequestURL = "https://wheel-app.herokuapp.com/";
+    public static final String roomCreateURL = "https://wheel-app.herokuapp.com/";
+    public static final String addTransactionURL = "https://wheel-app.herokuapp.com/";
     public static final String deleteTransactionURL = "https://wheel-app.herokuapp.com/";
-    public static final String authCheckURL =           "https://wheel-app.herokuapp.com/auth";
+    public static final String authCheckURL = "https://wheel-app.herokuapp.com/auth";
 
     public static final String CONNECTION_FAIL = "Connection to server failed! Check your internet connection?";
     public RequestQueue requestQueue;
 
     private static WheelAPI mInstance = null;
     private Context mContext;
+
     public WheelAPI(Context c) {
         mContext = c;
         String userAgent = "volley/0";
@@ -58,18 +57,22 @@ public class WheelAPI {
             String packageName = mContext.getPackageName();
             PackageInfo info = mContext.getPackageManager().getPackageInfo(packageName, 0);
             userAgent = packageName + "/" + info.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {}
+        } catch (PackageManager.NameNotFoundException e) {
+        }
         HttpStack httpStack = new WheelHttpClientStack(AndroidHttpClient.newInstance(userAgent));
         requestQueue = Volley.newRequestQueue(mContext, httpStack);
     }
+
     public static void initialize(Context c) {
         if (mInstance == null) {
             mInstance = new WheelAPI(c);
         }
     }
+
     public static WheelAPI getInstance() {
         return mInstance;
     }
+
     public void makeApiRequest(WheelAPI.ApiCall callType,
                                Map<String, String> parameters,
                                WheelAPIListener responseCallback) {
@@ -108,17 +111,17 @@ public class WheelAPI {
             parameters = new HashMap<>();
         }
         JSONObject params = new JSONObject(parameters);
-        requestQueue.add(new JsonObjectRequest(methodType, endPoint, params, onSuccess(responseCallback), onError()));
+        requestQueue.add(new JsonObjectRequest(methodType, endPoint, params, onSuccess(responseCallback), onError(responseCallback)));
     }
+
     public Response.Listener<JSONObject> onSuccess(final WheelAPIListener responseCallback) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
-                         responseCallback.onSuccess(response.getJSONObject("data"));
-                    }
-                    else {
+                        responseCallback.onSuccess(response.getJSONObject("data"));
+                    } else {
                         // Show Error Message
                         responseCallback.onError(response.getString("data"));
                     }
@@ -128,11 +131,12 @@ public class WheelAPI {
             }
         };
     }
-    public Response.ErrorListener onError() {
+
+    public Response.ErrorListener onError(final WheelAPIListener responseCallback) {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                ShowToast(CONNECTION_FAIL);
+                responseCallback.onConnectionError();
             }
         };
     }
@@ -145,12 +149,15 @@ public class WheelAPI {
             return null;
         }
     }
+
     public void ShowToast(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
     }
+
     public static String hashPassword(String password) {
         return getSHA256Password(password);
     }
+
     static String getSHA256Password(String password) {
         String generatedPassword = null;
 
@@ -167,6 +174,7 @@ public class WheelAPI {
         }
         return generatedPassword;
     }
+
     static String getSHA512Password(String passwordToHash, String salt) {
         String generatedPassword = null;
         try {
@@ -186,8 +194,12 @@ public class WheelAPI {
 
         return generatedPassword;
     }
+
     public interface WheelAPIListener {
         void onError(String error);
+
         void onSuccess(JSONObject response);
+
+        void onConnectionError();
     }
 }

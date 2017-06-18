@@ -1,41 +1,49 @@
 package org.wheel.expenses;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 public class StoredPreferencesManager {
-    public enum PreferenceKey {
-        SAVEDUSERNAME,
-        SAVEDPASSWORD
-    }
+    private final static String mSavedUsernameKey = "saved_username";
+    private final static String mSavedPasswordKey = "saved_password";
 
     private String mPreferenceKey;
-    private Context mContext;
     private static StoredPreferencesManager mInstance;
+    private SharedPreferences.Editor mEditor;
+    private SharedPreferences mSharedPreferences;
 
+    @SuppressLint("CommitPrefEdits")
     public StoredPreferencesManager(Context context) {
         mPreferenceKey = "WheelPreferences";
-        mContext = context;
+        mSharedPreferences = context.getSharedPreferences(mPreferenceKey, 0);
+        mEditor = mSharedPreferences.edit();
+
     }
 
-    public static StoredPreferencesManager getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new StoredPreferencesManager(context);
-        }
+    public static void initialize(Context context) {
+        mInstance = new StoredPreferencesManager(context);
+    }
+
+    public static StoredPreferencesManager getInstance() {
         return mInstance;
     }
 
-    private String getPreferenceKeyString(PreferenceKey key) {
-        return mPreferenceKey + String.valueOf(key);
+    public String getSavedUsername() {
+        return mSharedPreferences.getString(mSavedUsernameKey, "");
     }
 
-    public String getPreference(PreferenceKey key) {
-        return mContext.getSharedPreferences(mPreferenceKey, 0).getString(getPreferenceKeyString(key), "");
+    public String getSavedPassword() {
+        return mSharedPreferences.getString(mSavedPasswordKey, "");
     }
 
-    public void setPreference(PreferenceKey key, String value) {
-        SharedPreferences.Editor editor = mContext.getSharedPreferences(mPreferenceKey, 0).edit();
-        editor.putString(getPreferenceKeyString(key), value);
-        editor.apply();
+    public void setSavedUsername(String username) {
+        mEditor.putString(mSavedUsernameKey, username);
+        mEditor.apply();
+    }
+
+    public void setSavedPassword(String password) {
+        mEditor.putString(mSavedPasswordKey, password);
+        mEditor.apply();
     }
 }

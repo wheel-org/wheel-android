@@ -3,10 +3,6 @@ package org.wheel.expenses.data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Felix on 6/12/2017.
- */
-
 public class RoomInfo {
     private double mBalanceByUser;
     private String mId;
@@ -28,5 +24,9 @@ public class RoomInfo {
 
     public double getBalanceByUser() {
         return mBalanceByUser;
+    }
+
+    public String getId() {
+        return mId;
     }
 }

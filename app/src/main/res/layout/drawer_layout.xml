@@ -2,7 +2,6 @@
     android:id="@+id/left_drawer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_light"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -10,6 +9,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
         android:clipToPadding="false"
         android:orientation="horizontal"
         android:padding="8dp">
@@ -65,13 +66,35 @@
 
     <include layout="@layout/horizontal_divider"/>
 
+    <LinearLayout
+        android:id="@+id/drawer_create_room_btn"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true" android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/drawer_room_entry_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_weight="1"
+            android:text="Create a Room" android:textSize="18sp"
+            android:textStyle="bold"/>
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_input_add"/>
+    </LinearLayout>
+    <include layout="@layout/horizontal_divider"
+             layout_width="match_parent"
+    />
     <ListView
         android:id="@+id/drawer_listview"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:choiceMode="singleChoice"
         android:divider="@android:color/transparent"
-        android:dividerHeight="0dp">
-    </ListView>
+        android:dividerHeight="0dp"/>
 </LinearLayout>

@@ -1,5 +1,9 @@
 package org.wheel.expenses;
 
+import static com.android.volley.Request.Method.DELETE;
+import static com.android.volley.Request.Method.GET;
+import static com.android.volley.Request.Method.POST;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -22,29 +26,34 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.android.volley.Request.Method.DELETE;
-import static com.android.volley.Request.Method.GET;
-import static com.android.volley.Request.Method.POST;
-
 
 public class WheelAPI {
     public enum ApiCall {
         UserAuth, UserRegister, RoomAuth, RoomRequest, RoomCreate,
-        AddTransaction, DeleteTransaction, AuthCheck
+        AddTransaction, DeleteTransaction, UpdateUser
     }
 
     ;
 
-    public static final String userAuthURL = "https://wheel-app.herokuapp.com/login";
-    public static final String userRegisterURL = "https://wheel-app.herokuapp.com/register";
-    public static final String roomAuthURL = "https://wheel-app.herokuapp.com/register";
-    public static final String roomRequestURL = "https://wheel-app.herokuapp.com/";
-    public static final String roomCreateURL = "https://wheel-app.herokuapp.com/";
-    public static final String addTransactionURL = "https://wheel-app.herokuapp.com/";
-    public static final String deleteTransactionURL = "https://wheel-app.herokuapp.com/";
-    public static final String authCheckURL = "https://wheel-app.herokuapp.com/auth";
+    public static final String userAuthURL =
+            "https://wheel-app.herokuapp.com/login";
+    public static final String userRegisterURL =
+            "https://wheel-app.herokuapp.com/register";
+    public static final String roomAuthURL =
+            "https://wheel-app.herokuapp.com/register";
+    public static final String roomRequestURL =
+            "https://wheel-app.herokuapp.com/rooms/get";
+    public static final String roomCreateURL =
+            "https://wheel-app.herokuapp.com/rooms/create";
+    public static final String addTransactionURL =
+            "https://wheel-app.herokuapp.com/rooms/add";
+    public static final String deleteTransactionURL =
+            "https://wheel-app.herokuapp.com/rooms/delete";
+    public static final String updateUserURL =
+            "https://wheel-app.herokuapp.com/users/self";
 
-    public static final String CONNECTION_FAIL = "Connection to server failed! Check your internet connection?";
+    public static final String CONNECTION_FAIL =
+            "Connection to server failed! Check your internet connection?";
     public RequestQueue requestQueue;
 
     private static WheelAPI mInstance = null;
@@ -55,11 +64,13 @@ public class WheelAPI {
         String userAgent = "volley/0";
         try {
             String packageName = mContext.getPackageName();
-            PackageInfo info = mContext.getPackageManager().getPackageInfo(packageName, 0);
+            PackageInfo info = mContext.getPackageManager().getPackageInfo(
+                    packageName, 0);
             userAgent = packageName + "/" + info.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
         }
-        HttpStack httpStack = new WheelHttpClientStack(AndroidHttpClient.newInstance(userAgent));
+        HttpStack httpStack = new WheelHttpClientStack(
+                AndroidHttpClient.newInstance(userAgent));
         requestQueue = Volley.newRequestQueue(mContext, httpStack);
     }
 
@@ -74,15 +85,11 @@ public class WheelAPI {
     }
 
     public void makeApiRequest(WheelAPI.ApiCall callType,
-                               Map<String, String> parameters,
-                               WheelAPIListener responseCallback) {
+            Map<String, String> parameters,
+            WheelAPIListener responseCallback) {
         int methodType = POST;
         String endPoint = "";
         switch (callType) {
-            case AuthCheck:
-                endPoint = authCheckURL;
-                methodType = GET;
-                break;
             case UserAuth:
                 endPoint = userAuthURL;
                 break;
@@ -95,6 +102,9 @@ public class WheelAPI {
             case RoomRequest:
                 methodType = GET;
                 endPoint = roomRequestURL;
+                break;
+            case UpdateUser:
+                endPoint = updateUserURL;
                 break;
             case RoomCreate:
                 endPoint = roomCreateURL;
@@ -111,19 +121,22 @@ public class WheelAPI {
             parameters = new HashMap<>();
         }
         JSONObject params = new JSONObject(parameters);
-        requestQueue.add(new JsonObjectRequest(methodType, endPoint, params, onSuccess(responseCallback), onError(responseCallback)));
+        requestQueue.add(new JsonObjectRequest(methodType, endPoint, params,
+                onSuccess(responseCallback), onError(responseCallback)));
     }
 
-    public Response.Listener<JSONObject> onSuccess(final WheelAPIListener responseCallback) {
+    public Response.Listener<JSONObject> onSuccess(
+            final WheelAPIListener responseCallback) {
         return new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     if (response.getBoolean("success")) {
-                        responseCallback.onSuccess(response.getJSONObject("data"));
+                        responseCallback.onSuccess(
+                                response.getJSONObject("data"));
                     } else {
                         // Show Error Message
-                        responseCallback.onError(response.getString("data"));
+                        responseCallback.onError(response.getInt("data"));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -132,7 +145,8 @@ public class WheelAPI {
         };
     }
 
-    public Response.ErrorListener onError(final WheelAPIListener responseCallback) {
+    public Response.ErrorListener onError(
+            final WheelAPIListener responseCallback) {
         return new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -164,9 +178,11 @@ public class WheelAPI {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
 
-            md.update(password.getBytes("UTF-8")); // Change this to "UTF-16" if needed
+            md.update(password.getBytes(
+                    "UTF-8")); // Change this to "UTF-16" if needed
             byte[] digest = md.digest();
-            generatedPassword = String.format("%064x", new java.math.BigInteger(1, digest));
+            generatedPassword = String.format("%064x",
+                    new java.math.BigInteger(1, digest));
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
@@ -183,7 +199,8 @@ public class WheelAPI {
             byte[] bytes = md.digest(passwordToHash.getBytes("UTF-8"));
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < bytes.length; i++) {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100,
+                        16).substring(1));
             }
             generatedPassword = sb.toString();
         } catch (NoSuchAlgorithmException e) {
@@ -196,7 +213,7 @@ public class WheelAPI {
     }
 
     public interface WheelAPIListener {
-        void onError(String error);
+        void onError(int errorCode);
 
         void onSuccess(JSONObject response);
 

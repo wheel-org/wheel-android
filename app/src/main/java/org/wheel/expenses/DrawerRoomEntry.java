@@ -21,4 +21,8 @@ class DrawerRoomEntry {
         roomAmount.setText(v.getContext().getString(R.string.price_display,
                 mRoomInfo.getBalanceByUser()));
     }
+
+    public String getRoomId() {
+        return mRoomInfo.getId();
+    }
 }

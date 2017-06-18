@@ -18,7 +18,7 @@
 
 
         <EditText
-            android:id="@+id/username"
+            android:id="@+id/login_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
@@ -27,7 +27,7 @@
 
 
         <EditText
-            android:id="@+id/password"
+            android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
@@ -38,23 +38,22 @@
 
 
         <CheckBox
-            android:id="@+id/save_login"
+            android:id="@+id/login_save_details_checkbox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save my details and auto-login!"/>
 
         <Button
-            android:id="@+id/signin"
+            android:id="@+id/login_login_btn"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:onClick="LoginClick"
             android:text="Sign In"
             android:textStyle="bold"/>
 
         <Button
-            android:id="@+id/goToRegister"
+            android:id="@+id/login_goto_register"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -11,123 +11,110 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONObject;
-import org.wheel.expenses.data.User;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-import java.util.HashMap;
+public class RegisterActivity extends AppCompatActivity implements TextWatcher {
 
-public class RegisterActivity extends AppCompatActivity {
+    @BindView(R.id.register_goto_login)
     Button mGoToLogin;
+
+    @BindView(R.id.register_potential_error)
     TextView mPotentialError;
+
+    @BindView(R.id.register_full_name)
     EditText mFullName;
+
+    @BindView(R.id.register_username)
     EditText mUsername;
+
+    @BindView(R.id.register_password)
     EditText mPassword;
+
+    @BindView(R.id.register_password_again)
     EditText mPasswordAgain;
-    Button mRegister;
+
+    @BindView(R.id.register_register_btn)
+    Button mRegisterBtn;
+
+    @BindView(R.id.register_save_details_checkbox)
     CheckBox mSaveDetails;
 
-    public void RegisterClick(View v) {
-        if (verify()) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("username", mUsername.getText().toString());
-            params.put("password", WheelAPI.hashPassword(mPassword.getText().toString()));
-            params.put("name", mFullName.getText().toString());
-            WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.UserRegister, params, new WheelAPI.WheelAPIListener() {
-                @Override
-                public void onError(String error) {
-                    WheelAPI.getInstance().ShowToast(error);
-                }
+    private RegisterActivityPresenter mPresenter;
 
-                @Override
-                public void onSuccess(JSONObject response) {
-                    if (mSaveDetails.isChecked()) {
-                        StoredPreferencesManager.getInstance(getApplicationContext())
-                                .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDUSERNAME,
-                                        mUsername.getText().toString());
-                        StoredPreferencesManager.getInstance(getApplicationContext())
-                                .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDPASSWORD,
-                                        WheelAPI.hashPassword(mPassword.getText().toString()));
-                    } else {
-                        StoredPreferencesManager.getInstance(getApplicationContext())
-                                .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDUSERNAME, "");
-                        StoredPreferencesManager.getInstance(getApplicationContext())
-                                .setPreference(StoredPreferencesManager.PreferenceKey.SAVEDPASSWORD, "");
-                    }
-                    ApplicationStateManager.getInstance().setCurrentUser(new User(response));
-                    setResult(Activity.RESULT_OK, null);
-                    finish(); //finish the startNewOne activity
-                }
-
-                @Override
-                public void onConnectionError() {
-                    WheelAPI.getInstance().ShowToast(WheelAPI.CONNECTION_FAIL);
-                }
-            });
-        }
+    public String getFullName() {
+        return mFullName.getText().toString();
     }
 
-    private boolean verify() {
-        boolean allRight = true;
-        mPotentialError.setText("");
+    public String getUsername() {
+        return mUsername.getText().toString();
+    }
+
+    public String getPassword() {
+        return mPassword.getText().toString();
+    }
+
+    public String getPasswordAgain() {
+        return mPasswordAgain.getText().toString();
+    }
+
+    public boolean isSaveDetailsChecked() {
+        return mSaveDetails.isChecked();
+    }
+
+    public void showPotentialError() {
+        mPotentialError.setVisibility(View.VISIBLE);
+    }
+
+    public void hidePotentialError() {
         mPotentialError.setVisibility(View.GONE);
-        if (mFullName.getText().toString().isEmpty() ||
-                mUsername.getText().toString().isEmpty() ||
-                mPassword.getText().toString().isEmpty() ||
-                mPasswordAgain.getText().toString().isEmpty()) {
-            allRight = false;
-        } else if (!mPassword.getText().toString().equals(mPasswordAgain.getText().toString())) {
-            mPotentialError.setText("Passwords do not match!");
-            mPotentialError.setVisibility(View.VISIBLE);
-            allRight = false;
-        }
-        return allRight;
     }
 
-    public TextWatcher TextChangeWatch = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+    public void enableRegisterBtn() {
+        mRegisterBtn.setEnabled(true);
+    }
 
-        }
+    public void disableRegisterBtn() {
+        mRegisterBtn.setEnabled(false);
+    }
 
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            if (verify()) {
-                mRegister.setEnabled(true);
-            } else {
-                mRegister.setEnabled(false);
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-
-        }
-    };
+    public void onRegisterComplete() {
+        setResult(Activity.RESULT_OK, null);
+        finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mGoToLogin = (Button) findViewById(R.id.goToLogin);
-        mPotentialError = (TextView) findViewById(R.id.potentialError);
-        mPotentialError.setVisibility(View.GONE);
-        mRegister = (Button) findViewById(R.id.register);
+        ButterKnife.bind(this);
+        mPresenter = new RegisterActivityPresenter(this, StoredPreferencesManager.getInstance(),
+                WheelAPI.getInstance(), WheelClient.getInstance());
 
-        mFullName = (EditText) findViewById(R.id.fullname);
-        mFullName.addTextChangedListener(TextChangeWatch);
-        mUsername = (EditText) findViewById(R.id.username);
-        mUsername.addTextChangedListener(TextChangeWatch);
-        mPassword = (EditText) findViewById(R.id.password);
-        mPassword.addTextChangedListener(TextChangeWatch);
-        mPasswordAgain = (EditText) findViewById(R.id.passwordAgain);
-        mPasswordAgain.addTextChangedListener(TextChangeWatch);
-        mSaveDetails = (CheckBox) findViewById(R.id.save_login);
-        mGoToLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
-        });
+        mPotentialError.setVisibility(View.GONE);
+        mFullName.addTextChangedListener(this);
+        mUsername.addTextChangedListener(this);
+        mPassword.addTextChangedListener(this);
+        mPasswordAgain.addTextChangedListener(this);
+        mGoToLogin.setOnClickListener(view -> finish());
+        mRegisterBtn.setOnClickListener(view -> mPresenter.onRegisterClick());
+        mPotentialError.setText(R.string.register_password_not_match);
+
+        mPresenter.onCreate();
     }
 
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        mPresenter.onTextChanged();
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
 }

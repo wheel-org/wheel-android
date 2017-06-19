@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:id="@+id/activity_main"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="org.wheel.expenses.MainActivity"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:fitsSystemWindows="true">
+    tools:context="org.wheel.expenses.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/main_toolbar"
@@ -16,8 +15,10 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
-        app:theme="@style/WheelTheme.ToolbarTheme"
-        app:popupTheme="@style/WheelTheme.PopupTheme"/>
+        app:popupTheme="@style/WheelTheme.PopupTheme"
+        app:theme="@style/WheelTheme.ToolbarTheme">
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
@@ -25,9 +26,27 @@
         android:layout_height="match_parent">
 
 
-        <FrameLayout android:layout_width="match_parent"
-                     android:layout_height="match_parent"
-                     android:id="@+id/main_fragment_container">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/main_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/main_loading_layout_wrapper"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white">
+
+                <include  android:id="@+id/main_loading_layout"
+                    layout="@layout/activity_splash_screen" />
+            </FrameLayout>
+
 
         </FrameLayout>
 
@@ -37,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="start">
 
-            <include layout="@layout/drawer_layout"/>
+            <include layout="@layout/drawer_layout" />
 
         </android.support.design.widget.NavigationView>
     </android.support.v4.widget.DrawerLayout>

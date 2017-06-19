@@ -1,89 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.wheel.expenses.RegisterActivity">
+    <LinearLayout
 
-    <EditText
-        android:id="@+id/register_full_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:hint="Full Name"
-        android:inputType="text"
-        android:maxLines="1"/>
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <EditText
-        android:id="@+id/register_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:hint="Desired Username"
-        android:inputType="text"
-        android:maxLines="1"/>
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent" android:layout_height="150dp"
+            android:foregroundTintMode="src_over"
+            app:srcCompat="@drawable/logo"/>
+        <EditText
+            android:id="@+id/register_full_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Full Name"
+            android:inputType="text"
+            android:maxLines="1"/>
+
+        <EditText
+            android:id="@+id/register_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Desired Username"
+            android:inputType="text"
+            android:maxLines="1"/>
 
 
-    <EditText
-        android:id="@+id/register_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"/>
+        <EditText
+            android:id="@+id/register_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true"/>
 
 
-    <EditText
-        android:id="@+id/register_password_again"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:hint="Password Again"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:singleLine="true"/>
+        <EditText
+            android:id="@+id/register_password_again"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:hint="Password Again"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true"/>
 
-    <TextView
-        android:id="@+id/register_potential_error"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="potentialError"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"/>
+        <TextView
+            android:id="@+id/register_potential_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="potentialError"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"/>
 
-    <CheckBox
-        android:id="@+id/register_save_details_checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save my details and auto-login!"/>
+        <CheckBox
+            android:id="@+id/register_save_details_checkbox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save my details and auto-login!"/>
 
-    <Button
-        android:id="@+id/register_register_btn"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:onClick="RegisterClick"
-        android:text="Make my account!"
-        android:textStyle="bold"/>
+        <Button
+            android:id="@+id/register_register_btn"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:onClick="RegisterClick"
+            android:text="Make my account!"
+            android:textStyle="bold"/>
 
-    <Button
-        android:id="@+id/register_goto_login"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Already have an account?"
-        android:textStyle="bold"/>
-</LinearLayout>
+        <Button
+            android:id="@+id/register_goto_login"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Already have an account?"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</ScrollView>

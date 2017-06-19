@@ -1,7 +1,6 @@
 package org.wheel.expenses;
 
 import static com.android.volley.Request.Method.DELETE;
-import static com.android.volley.Request.Method.GET;
 import static com.android.volley.Request.Method.POST;
 
 import android.content.Context;
@@ -20,9 +19,6 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,7 +96,6 @@ public class WheelAPI {
                 endPoint = roomAuthURL;
                 break;
             case RoomRequest:
-                methodType = GET;
                 endPoint = roomRequestURL;
                 break;
             case UpdateUser:
@@ -166,50 +161,6 @@ public class WheelAPI {
 
     public void ShowToast(String message) {
         Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-    }
-
-    public static String hashPassword(String password) {
-        return getSHA256Password(password);
-    }
-
-    static String getSHA256Password(String password) {
-        String generatedPassword = null;
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-
-            md.update(password.getBytes(
-                    "UTF-8")); // Change this to "UTF-16" if needed
-            byte[] digest = md.digest();
-            generatedPassword = String.format("%064x",
-                    new java.math.BigInteger(1, digest));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return generatedPassword;
-    }
-
-    static String getSHA512Password(String passwordToHash, String salt) {
-        String generatedPassword = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            md.update(salt.getBytes("UTF-8"));
-            byte[] bytes = md.digest(passwordToHash.getBytes("UTF-8"));
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < bytes.length; i++) {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100,
-                        16).substring(1));
-            }
-            generatedPassword = sb.toString();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-
-        return generatedPassword;
     }
 
     public interface WheelAPIListener {

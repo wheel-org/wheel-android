@@ -17,6 +17,7 @@
     <string name="register_password_not_match">Passwords do not match!</string>
     <string name="splash_swipe_to_try_again">Could not connect to server. Swipe down to try again.
     </string>
+    <string name="main_loading_text">Loading...</string>
 
 
 </resources>

@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RoomInfo {
-    private double mBalanceByUser;
+    private int mBalanceByUser;
     private String mId;
     private String mName;
 
@@ -12,7 +12,7 @@ public class RoomInfo {
         try {
             mName = jsonObject.getString("name");
             mId = jsonObject.getString("id");
-            mBalanceByUser = jsonObject.getDouble("balance");
+            mBalanceByUser = jsonObject.getInt("balance");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -22,7 +22,7 @@ public class RoomInfo {
         return mName;
     }
 
-    public double getBalanceByUser() {
+    public int getBalanceByUser() {
         return mBalanceByUser;
     }
 

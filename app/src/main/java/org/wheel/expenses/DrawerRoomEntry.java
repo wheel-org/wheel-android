@@ -18,8 +18,7 @@ class DrawerRoomEntry {
         TextView roomAmount = (TextView) v.findViewById(
                 R.id.drawer_room_entry_amount);
         roomName.setText(mRoomInfo.getName());
-        roomAmount.setText(v.getContext().getString(R.string.price_display,
-                mRoomInfo.getBalanceByUser()));
+        roomAmount.setText(WheelUtil.getStringFromPrice(mRoomInfo.getBalanceByUser()));
     }
 
     public String getRoomId() {

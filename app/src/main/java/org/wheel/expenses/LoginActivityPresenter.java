@@ -33,7 +33,7 @@ public class LoginActivityPresenter implements ActivityLifecycleHandler {
     public void onLoginClicked() {
         HashMap<String, String> params = new HashMap<String, String>();
         final String username = mLoginActivity.getUsernameText();
-        final String password = WheelAPI.hashPassword(mLoginActivity.getPasswordText());
+        final String password = WheelUtil.hashPassword(mLoginActivity.getPasswordText());
         params.put("username", username);
         params.put("password", password);
         mLoginActivity.disableLoginButton();

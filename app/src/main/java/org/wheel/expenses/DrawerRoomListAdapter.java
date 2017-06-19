@@ -14,10 +14,12 @@ public class DrawerRoomListAdapter extends BaseAdapter {
 
     public DrawerRoomListAdapter(Context context) {
         mContext = context;
+        mDrawerRoomEntryList = new ArrayList<>();
     }
 
     public void update(ArrayList<DrawerRoomEntry> newList) {
-        mDrawerRoomEntryList = newList;
+        mDrawerRoomEntryList.clear();
+        mDrawerRoomEntryList.addAll(newList);
         notifyDataSetChanged();
     }
 

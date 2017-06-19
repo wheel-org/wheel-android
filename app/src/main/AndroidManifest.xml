@@ -29,8 +29,7 @@
             android:label="@string/title_activity_register"/>
         <activity
             android:name=".SplashScreenActivity"
-            android:label="Wheel"
-            android:theme="@style/WheelTheme">
+            android:label="Wheel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

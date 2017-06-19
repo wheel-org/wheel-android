@@ -61,7 +61,7 @@ class RegisterActivityPresenter implements ActivityLifecycleHandler {
         if (verifyRegisterFields()) {
             final String username = mRegisterActivity.getUsername();
             final String fullName = mRegisterActivity.getFullName();
-            final String password = WheelAPI.hashPassword(mRegisterActivity.getPassword());
+            final String password = WheelUtil.hashPassword(mRegisterActivity.getPassword());
             HashMap<String, String> params = new HashMap<>();
             params.put("username", username);
             params.put("password", password);

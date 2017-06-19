@@ -1,5 +1,7 @@
 package org.wheel.expenses;
 
+import org.wheel.expenses.data.Transaction;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,37 +11,37 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.wheel.expenses.data.Transaction;
-
 import java.util.ArrayList;
-
-/**
- * Created by felixg on 5/5/17.
- */
 
 public class TransactionListAdapter extends BaseAdapter {
     private final Context context;
     private ArrayList<Transaction> transactions;
+
     public TransactionListAdapter(Context context) {
         super();
         this.context = context;
         this.transactions = new ArrayList<>();
     }
+
     public int getCount() {
         return transactions.size();
     }
+
     public Transaction getItem(int arg0) {
         return transactions.get(arg0);
     }
+
     public long getItemId(int position) {
         return position;
     }
-    public void updateData(ArrayList<Transaction> values) {
+
+    public void update(ArrayList<Transaction> values) {
         this.transactions.clear();
         this.transactions.addAll(values);
         Log.v("Values: ", String.valueOf(values.size()));
         this.notifyDataSetChanged();
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 

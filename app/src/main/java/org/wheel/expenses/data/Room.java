@@ -18,7 +18,7 @@ public class Room {
     public Room(JSONObject jsonObject) {
         try {
             mName = jsonObject.getString("name");
-            //mId = jsonObject.getString("id");
+            mId = jsonObject.getString("id");
             JSONArray userMap = jsonObject.getJSONArray("users");
             mUsers = new HashMap<>();
             mTransactions = new ArrayList<>();
@@ -46,5 +46,9 @@ public class Room {
 
     public String getName() {
         return mName;
+    }
+
+    public String getId() {
+        return mId;
     }
 }

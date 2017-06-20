@@ -15,10 +15,6 @@ import java.util.Map;
 public class MainActivityPresenter implements ActivityLifecycleHandler,
         CreateRoomDialogFragment.CreateRoomDialogFragmentListener {
 
-    enum DisplayedFragmentType {
-        RoomDisplay, UserDisplay
-    }
-
     private MainActivity mActivity;
     private WheelClient mWheelClient;
     private WheelAPI mWheelAPI;
@@ -125,7 +121,26 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         newFragment.setListener(this);
     }
 
-    private void updateActivity() {
+    public void updateActivity() {
+        mWheelClient.updateCurrentUser(new WheelAPI.WheelAPIListener() {
+            @Override
+            public void onError(int errorCode) {
+                mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+            }
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                updateTextActivity();
+            }
+
+            @Override
+            public void onConnectionError() {
+                mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+            }
+        });
+    }
+
+    private void updateTextActivity() {
         mActivity.setDrawerText(mWheelClient.getCurrentUser().getName(),
                 mActivity.getString(R.string.drawer_logged_in,
                         mWheelClient.getCurrentUser().getUsername()));
@@ -134,11 +149,11 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     @Override
     public void onCreate() {
-        updateActivity();
+        updateTextActivity();
     }
 
     @Override
     public void onSuccess() {
-        updateActivity();
+        updateTextActivity();
     }
 }

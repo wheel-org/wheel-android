@@ -1,7 +1,6 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.Transaction;
+import static android.view.KeyEvent.KEYCODE_DEL;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -18,6 +17,9 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.Transaction;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -25,10 +27,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.view.KeyEvent.KEYCODE_DEL;
-
 public class RoomDisplayFragment extends Fragment implements MainActivityContentFragment,
-                                                             TextWatcher {
+        TextWatcher {
 
     @BindView(R.id.room_display_send_transaction_btn)
     Button mSendBtn;
@@ -51,18 +51,27 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
     @BindView(R.id.room_display_past_transactions)
     ListView mTransactionsListView;
 
+    @BindView(R.id.room_display_max_amount)
+    TextView mMaxAmountTextView;
+
+    @BindView(R.id.room_display_min_amount)
+    TextView mMinAmountTextView;
+
     TransactionListAdapter mTransactionListAdapter;
 
     private RoomDisplayFragmentPresenter mPresenter;
     private Room mRoomToDisplay;
+    private StringBuilder mPriceInputText = new StringBuilder();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mPresenter = new RoomDisplayFragmentPresenter(this,
-                                                      mRoomToDisplay,
-                                                      WheelClient.getInstance(),
-                                                      WheelAPI.getInstance());
+            Bundle savedInstanceState) {
+        mPresenter = new RoomDisplayFragmentPresenter(
+                (MainActivity) this.getActivity(),
+                this,
+                mRoomToDisplay,
+                WheelClient.getInstance(),
+                WheelAPI.getInstance());
         View v = inflater.inflate(R.layout.fragment_room_display, container, false);
         ButterKnife.bind(this, v);
 
@@ -71,24 +80,19 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter);
         mSendBtn.setOnClickListener(view -> mPresenter.onSendTransactionClicked());
         mPriceInput.setCursorVisible(false);
-        mPriceInput.setOnKeyListener(new View.OnKeyListener() {
-            StringBuilder input = new StringBuilder();
-
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                    char uchar = (char) event.getUnicodeChar();
-                    if (keyCode == KEYCODE_DEL && input.length() > 0) {
-                        input.deleteCharAt(input.length() - 1);
-                    } else if (uchar >= '0' && uchar <= '9') {
-                        input.append(uchar);
-                    }
-                    int stripped = WheelUtil.getPriceFromString(input.toString());
-                    String result = WheelUtil.getStringFromPrice(stripped);
-                    mPriceInput.setText(result);
+        mPriceInput.setOnKeyListener((v1, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                char uchar = (char) event.getUnicodeChar();
+                if (keyCode == KEYCODE_DEL && mPriceInputText.length() > 0) {
+                    mPriceInputText.deleteCharAt(mPriceInputText.length() - 1);
+                } else if (uchar >= '0' && uchar <= '9') {
+                    mPriceInputText.append(uchar);
                 }
-                return true;
+                int stripped = WheelUtil.getPriceFromString(mPriceInputText.toString());
+                String result = WheelUtil.getStringFromPrice(stripped);
+                mPriceInput.setText(result);
             }
+            return true;
         });
         mPriceInput.addTextChangedListener(this);
         mDescInput.addTextChangedListener(this);
@@ -107,6 +111,8 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     public void setUserList(Map<String, Integer> userList) {
         int max = (int) Math.pow(10, Math.ceil(Math.log10(Collections.max(userList.values()))));
+        mMaxAmountTextView.setText(WheelUtil.getStringFromPrice(max));
+        mMinAmountTextView.setText(WheelUtil.getStringFromPrice(0));
         LayoutInflater layoutInflater = LayoutInflater.from(this.getActivity());
         mUserList.removeAllViews();
         for (Map.Entry<String, Integer> entry : userList.entrySet()) {
@@ -153,5 +159,13 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
     @Override
     public void afterTextChanged(Editable s) {
 
+    }
+
+    public void resetTextFields() {
+        mDescInput.setText("");
+        mPriceInputText.setLength(0);
+        mPriceInput.setText("");
+        mDescInput.clearFocus();
+        mPriceInput.clearFocus();
     }
 }

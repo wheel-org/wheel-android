@@ -1,10 +1,10 @@
 package org.wheel.expenses;
 
+import android.content.Context;
+
 import org.json.JSONObject;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.data.User;
-
-import android.content.Context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +57,7 @@ public class WheelClient {
         Map<String, String> params = new HashMap<>();
         params.put("username", mCurrentUsername);
         params.put("password", mCurrentPassword);
-        WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.UpdateUser,
+        WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.UserAuth,
                                               params,
                                               new WheelAPI.WheelAPIListener() {
                                                   @Override

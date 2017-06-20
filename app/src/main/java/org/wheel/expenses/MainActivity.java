@@ -22,9 +22,6 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
         AdapterView.OnItemClickListener {
-    static TransactionListAdapter mTransactionListAdapter;
-    public static final String delimiter = "|";
-    boolean modifying = false;
 
     @BindView(R.id.drawer_name)
     TextView mDrawerNameDisp;
@@ -89,7 +86,17 @@ public class MainActivity extends AppCompatActivity implements
         setProgressBarIndeterminateVisibility(false);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer,
                 R.string.drawer_open,
-                R.string.drawer_close);
+                R.string.drawer_close)  {
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+
+            }
+
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                updateActivity();
+            }
+        };
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerList.setOnItemClickListener(this);
         mCreateRoomButton.setOnClickListener(view -> {
@@ -133,5 +140,9 @@ public class MainActivity extends AppCompatActivity implements
     public void errorLoading() {
         mLoadingText.setText(R.string.splash_swipe_to_try_again);
         mLoadingRefreshLayout.setRefreshing(false);
+    }
+
+    public void updateActivity() {
+        mPresenter.updateActivity();
     }
 }

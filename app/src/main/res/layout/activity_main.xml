@@ -43,7 +43,8 @@
                 android:layout_height="match_parent"
                 android:background="@android:color/white">
 
-                <include  android:id="@+id/main_loading_layout"
+                <include
+                    android:id="@+id/main_loading_layout"
                     layout="@layout/activity_splash_screen" />
             </FrameLayout>
 
@@ -57,7 +58,6 @@
             android:layout_gravity="start">
 
             <include layout="@layout/drawer_layout" />
-
         </android.support.design.widget.NavigationView>
     </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

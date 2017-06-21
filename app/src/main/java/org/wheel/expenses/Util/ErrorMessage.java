@@ -1,4 +1,4 @@
-package org.wheel.expenses;
+package org.wheel.expenses.Util;
 
 public class ErrorMessage {
     private static String[] Messages = {

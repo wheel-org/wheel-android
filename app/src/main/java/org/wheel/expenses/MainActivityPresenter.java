@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 
 import org.json.JSONObject;
+import org.wheel.expenses.Util.ErrorMessage;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.data.RoomInfo;
 import org.wheel.expenses.data.User;
@@ -13,7 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivityPresenter implements ActivityLifecycleHandler,
-        CreateRoomDialogFragment.CreateRoomDialogFragmentListener {
+        CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
+        JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
 
     private MainActivity mActivity;
     private WheelClient mWheelClient;
@@ -28,7 +30,6 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         mActivity = activity;
         mWheelClient = wheelClient;
         mWheelAPI = wheelAPI;
-        showDefaultUserFragment();
     }
 
     public void showDefaultUserFragment() {
@@ -84,7 +85,8 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
                     public void onSuccess(JSONObject response) {
                         mWheelClient.setCurrentRoom(new Room(response));
                         if (mDisplayedFragment != null) {
-                            mActivity.getFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
+                            mActivity.getFragmentManager().beginTransaction().remove(
+                                    mDisplayedFragment).commit();
                         }
                         showRoomFragment(mWheelClient.getCurrentRoom());
                         mActivity.hideLoading();
@@ -150,10 +152,28 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     @Override
     public void onCreate() {
         updateTextActivity();
+        boolean launchDefault = true;
+        if (mWheelClient.getWheelDeeplinkBundle() != null) {
+            if (mWheelClient.getWheelDeeplinkBundle().getAction()
+                    == WheelDeeplinkBundle.Actions.ROOM) {
+                loadRoom(mWheelClient.getWheelDeeplinkBundle().getData());
+                launchDefault = false;
+            }
+        }
+        if (launchDefault) {
+            showDefaultUserFragment();
+        }
+        mWheelClient.setWheelDeeplinkBundle(null);
     }
 
     @Override
     public void onSuccess() {
         updateTextActivity();
+    }
+
+    public void onJoinRoomClicked() {
+        JoinRoomDialogFragment newFragment = new JoinRoomDialogFragment();
+        newFragment.show(mActivity.getFragmentManager(), "dialog");
+        newFragment.setListener(this);
     }
 }

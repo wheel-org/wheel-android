@@ -6,27 +6,27 @@ import org.wheel.expenses.Util.ErrorMessage;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandler {
-    private CreateRoomDialogFragment mFragment;
+public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler {
+    private JoinRoomDialogFragment mFragment;
     private WheelClient mWheelClient;
     private WheelAPI mWheelAPI;
-    private CreateRoomDialogFragment.CreateRoomDialogFragmentListener mListener;
+    private JoinRoomDialogFragment.JoinRoomDialogFragmentListener mListener;
 
-    public CreateRoomDialogFragmentPresenter(CreateRoomDialogFragment createRoomDialogFragment,
+    public JoinRoomDialogFragmentPresenter(JoinRoomDialogFragment createRoomDialogFragment,
             WheelClient wheelClient, WheelAPI wheelAPI) {
         mFragment = createRoomDialogFragment;
         mWheelClient = wheelClient;
         mWheelAPI = wheelAPI;
     }
 
-    public void onCreateRoomClicked(String roomName, String roomPassword) {
+    public void onJoinRoomClicked(String roomId, String roomPassword) {
         Map<String, String> params = new HashMap<>();
         params.put("username", mWheelClient.getCurrentUser().getUsername());
         params.put("password", mWheelClient.getCurrentPassword());
-        params.put("roomName", roomName);
+        params.put("id", roomId);
         params.put("roomPassword", roomPassword);
         mWheelAPI.makeApiRequest(
-                WheelAPI.ApiCall.RoomCreate, params,
+                WheelAPI.ApiCall.RoomJoin, params,
                 new WheelAPI.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
@@ -50,7 +50,7 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
 
     }
 
-    public void setListener(CreateRoomDialogFragment.CreateRoomDialogFragmentListener listener) {
+    public void setListener(JoinRoomDialogFragment.JoinRoomDialogFragmentListener listener) {
         mListener = listener;
     }
 }

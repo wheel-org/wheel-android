@@ -1,11 +1,17 @@
-package org.wheel.expenses;
+package org.wheel.expenses.Util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.Locale;
 
 public class WheelUtil {
+
+    public static String getRoomShareUrl(String roomID) {
+        final String roomShareUrl = "http://wheel-app.herokuapp.com/app/room/%s";
+        return String.format(roomShareUrl, roomID);
+    }
     public static String getStringFromPrice(int price) {
         return "$" + (price / 100) + "." + String.format(Locale.ENGLISH, "%02d", price % 100);
     }
@@ -37,4 +43,10 @@ public class WheelUtil {
         if (price.isEmpty()) return 0;
         return Integer.parseInt(price.replaceAll("[^\\d]", ""));
     }
+
+    public static String getFriendlyDateString(Date date) {
+        return FriendlyDateFormatter.createFriendlyDate(date);
+    }
+
+
 }

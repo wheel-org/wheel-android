@@ -43,6 +43,9 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.drawer_create_room_btn)
     LinearLayout mCreateRoomButton;
 
+    @BindView(R.id.drawer_join_room_btn)
+    LinearLayout mJoinRoomButton;
+
     @BindView(R.id.drawer_user_row)
     LinearLayout mUserRowItem;
 
@@ -101,6 +104,10 @@ public class MainActivity extends AppCompatActivity implements
         mDrawerList.setOnItemClickListener(this);
         mCreateRoomButton.setOnClickListener(view -> {
             mPresenter.onCreateRoomClicked();
+            mDrawer.closeDrawers();
+        });
+        mJoinRoomButton.setOnClickListener(view -> {
+            mPresenter.onJoinRoomClicked();
             mDrawer.closeDrawers();
         });
         mUserRowItem.setOnClickListener(view -> {

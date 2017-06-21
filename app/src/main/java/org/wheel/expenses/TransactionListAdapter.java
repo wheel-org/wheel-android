@@ -1,7 +1,5 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.data.Transaction;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.wheel.expenses.data.Transaction;
 
 import java.util.ArrayList;
 
@@ -58,7 +58,7 @@ public class TransactionListAdapter extends BaseAdapter {
         //userT.setImageDrawable(context.getResources().getDrawable(curr.getUser() == 0 ? R.mipmap.felix_icon : R.mipmap.michael_icon));
         priceT.setText(curr.getAmount());
         descT.setText(curr.getDescription());
-        dateT.setText(curr.getDate());
+        dateT.setText(curr.getDateString());
 
         return convertView;
     }

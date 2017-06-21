@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,6 +18,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.wheel.expenses.Util.WheelUtil;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.data.Transaction;
 
@@ -28,10 +30,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class RoomDisplayFragment extends Fragment implements MainActivityContentFragment,
-        TextWatcher {
+        TextWatcher, AdapterView.OnItemClickListener {
 
     @BindView(R.id.room_display_send_transaction_btn)
     Button mSendBtn;
+
+    @BindView(R.id.room_display_share_link_btn)
+    Button mShareBtn;
 
     @BindView(R.id.room_display_price_input)
     EditText mPriceInput;
@@ -41,6 +46,9 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     @BindView(R.id.room_display_intro_text)
     TextView mUserWelcome;
+
+    @BindView(R.id.room_display_id)
+    TextView mRoomID;
 
     @BindView(R.id.room_display_user_list)
     LinearLayout mUserList;
@@ -77,8 +85,10 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
         mTransactionListAdapter = new TransactionListAdapter(this.getActivity());
         mTransactionsListView.setAdapter(mTransactionListAdapter);
+        mTransactionsListView.setOnItemClickListener(this);
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter);
         mSendBtn.setOnClickListener(view -> mPresenter.onSendTransactionClicked());
+        mShareBtn.setOnClickListener(view -> mPresenter.onShareLinkClicked());
         mPriceInput.setCursorVisible(false);
         mPriceInput.setOnKeyListener((v1, keyCode, event) -> {
             if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -99,6 +109,14 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
         mSendBtn.setEnabled(false);
         mPresenter.onCreate();
         return v;
+    }
+
+    public void setShareBtnDisplayString(String s) {
+        mShareBtn.setText(s);
+    }
+
+    public void setIdDisplayString(String s) {
+        mRoomID.setText(s);
     }
 
     public void setRoomToDisplay(Room roomToDisplay) {
@@ -127,6 +145,7 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
     }
 
     public void setTransactionList(ArrayList<Transaction> list) {
+        Collections.sort(list, (t1, t2) -> t2.getDate().compareTo(t1.getDate()));
         mTransactionListAdapter.update(list);
     }
 
@@ -136,6 +155,14 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     public void disableSendBtn() {
         mSendBtn.setEnabled(false);
+    }
+
+    public void enableTransactionListInteraction() {
+        mTransactionsListView.setEnabled(true);
+    }
+
+    public void disableTransactionListInteraction() {
+        mTransactionsListView.setEnabled(false);
     }
 
     public int getPriceInput() {
@@ -167,5 +194,18 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
         mPriceInput.setText("");
         mDescInput.clearFocus();
         mPriceInput.clearFocus();
+    }
+
+    public void hideRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void showRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long id) {
+        mPresenter.promptDeleteTransaction(mTransactionListAdapter.getItem(pos));
     }
 }

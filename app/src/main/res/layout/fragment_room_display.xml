@@ -10,13 +10,44 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/room_display_intro_text"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Intro"
-        android:textSize="24sp"
-        android:textStyle="normal|bold" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/room_display_intro_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Intro"
+                android:textSize="24sp"
+                android:textStyle="normal|bold" />
+
+            <TextView
+                android:id="@+id/room_display_id"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                tools:text="12345" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/room_display_share_link_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            tools:text="Share (12345)" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -80,7 +111,7 @@
             android:layout_weight="0.5"
             android:ems="10"
             android:hint="Uber"
-            android:inputType="text" />
+            android:inputType="textCapSentences" />
 
         <Button
             android:id="@+id/room_display_send_transaction_btn"

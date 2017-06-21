@@ -3,9 +3,7 @@
     <string name="title_activity_login">Welcome to Wheel!</string>
     <string name="title_activity_register">Make an Account!</string>
 
-    <string name="splash_connect_to_server_loading_text">Connecting to the
-        server...
-    </string>
+    <string name="splash_connect_to_server_loading_text">Connecting to the server...</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
     <string name="drawer_logged_in">Logged in as %1$s.</string>
@@ -18,6 +16,12 @@
     <string name="splash_swipe_to_try_again">Could not connect to server. Swipe down to try again.
     </string>
     <string name="main_loading_text">Loading...</string>
+    <string name="join_room">Join Room</string>
+    <string name="join_room_join">Join</string>
+    <string name="delete_transaction_title">Delete Transaction?</string>
+    <string name="delete_transaction_confirmation_message">Are you sure you want to delete transaction for %1$s on %2$s.</string>
+    <string name="room_display_id_display">ID: %s</string>
+    <string name="room_display_share_room">Share Room URL</string>
 
 
 </resources>

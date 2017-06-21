@@ -15,18 +15,18 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class CreateRoomDialogFragment extends DialogFragment {
+public class JoinRoomDialogFragment extends DialogFragment {
 
-    @BindView(R.id.create_room_name)
-    EditText roomName;
+    @BindView(R.id.join_room_id)
+    EditText roomId;
 
-    @BindView(R.id.create_room_password)
+    @BindView(R.id.join_room_password)
     EditText roomPassword;
 
-    private CreateRoomDialogFragmentPresenter mPresenter;
+    private JoinRoomDialogFragmentPresenter mPresenter;
 
-    public CreateRoomDialogFragment() {
-        mPresenter = new CreateRoomDialogFragmentPresenter(this, WheelClient.getInstance(),
+    public JoinRoomDialogFragment() {
+        mPresenter = new JoinRoomDialogFragmentPresenter(this, WheelClient.getInstance(),
                 WheelAPI.getInstance());
     }
 
@@ -35,21 +35,23 @@ public class CreateRoomDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.dialog_create_room, null);
+        View v = inflater.inflate(R.layout.dialog_join_room, null);
+        mPresenter = new JoinRoomDialogFragmentPresenter(this, WheelClient.getInstance(),
+                WheelAPI.getInstance());
         ButterKnife.bind(this, v);
         builder.setView(v)
-                .setTitle(R.string.create_room)
-                .setPositiveButton(R.string.create_room_create,
-                        (dialog, id) -> mPresenter.onCreateRoomClicked(
-                                roomName.getText().toString(),
+                .setTitle(R.string.join_room)
+                .setPositiveButton(R.string.join_room_join,
+                        (dialog, id) -> mPresenter.onJoinRoomClicked(
+                                roomId.getText().toString(),
                                 roomPassword.getText().toString()))
                 .setNegativeButton(R.string.create_room_cancel,
-                        (dialog, id) -> CreateRoomDialogFragment.this.getDialog()
+                        (dialog, id) -> JoinRoomDialogFragment.this.getDialog()
                                 .cancel());
         AlertDialog d = builder.create();
         d.setOnShowListener(dialogInterface -> {
             d.getButton(BUTTON_POSITIVE).setEnabled(false);
-            roomName.addTextChangedListener(new TextWatcher() {
+            roomId.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence charSequence,
                         int i,
@@ -74,11 +76,11 @@ public class CreateRoomDialogFragment extends DialogFragment {
         return d;
     }
 
-    public void setListener(CreateRoomDialogFragmentListener listener) {
+    public void setListener(JoinRoomDialogFragmentListener listener) {
         mPresenter.setListener(listener);
     }
 
-    public interface CreateRoomDialogFragmentListener {
+    public interface JoinRoomDialogFragmentListener {
         void onSuccess();
     }
 }

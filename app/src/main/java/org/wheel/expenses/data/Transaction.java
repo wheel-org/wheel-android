@@ -2,12 +2,9 @@ package org.wheel.expenses.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wheel.expenses.WheelUtil;
+import org.wheel.expenses.Util.WheelUtil;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class Transaction {
     private String mUser;
@@ -16,7 +13,7 @@ public class Transaction {
     private Date mCreatedDate;
     private String mId;
 
-    static DateFormat df = new SimpleDateFormat("EEE, MMMM dd 'at' hh:mma", Locale.US);
+
 
     public Transaction(JSONObject jsonObject) {
         try {
@@ -42,8 +39,12 @@ public class Transaction {
         return mDescription;
     }
 
-    public String getDate() {
-        return df.format(mCreatedDate);
+    public String getDateString() {
+        return WheelUtil.getFriendlyDateString(mCreatedDate);
+    }
+
+    public Date getDate() {
+        return mCreatedDate;
     }
 
     public String getId() {

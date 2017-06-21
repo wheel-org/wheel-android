@@ -24,33 +24,31 @@ import java.util.Map;
 
 
 public class WheelAPI {
-    public enum ApiCall {
-        UserAuth, UserRegister, RoomAuth, RoomRequest, RoomCreate,
+    enum ApiCall {
+        UserAuth, UserRegister, RoomJoin, RoomRequest, RoomCreate,
         AddTransaction, DeleteTransaction, UpdateUser
     }
 
-    ;
-
-    public static final String userAuthURL =
+    private static final String userAuthURL =
             "https://wheel-app.herokuapp.com/login";
-    public static final String userRegisterURL =
+    private static final String userRegisterURL =
             "https://wheel-app.herokuapp.com/register";
-    public static final String roomAuthURL =
-            "https://wheel-app.herokuapp.com/register";
-    public static final String roomRequestURL =
+    private static final String roomAuthURL =
+            "https://wheel-app.herokuapp.com/rooms/join";
+    private static final String roomRequestURL =
             "https://wheel-app.herokuapp.com/rooms/get";
-    public static final String roomCreateURL =
+    private static final String roomCreateURL =
             "https://wheel-app.herokuapp.com/rooms/create";
-    public static final String addTransactionURL =
-            "https://wheel-app.herokuapp.com/rooms/add";
-    public static final String deleteTransactionURL =
-            "https://wheel-app.herokuapp.com/rooms/delete";
-    public static final String updateUserURL =
+    private static final String addTransactionURL =
+            "https://wheel-app.herokuapp.com/transactions/add";
+    private static final String deleteTransactionURL =
+            "https://wheel-app.herokuapp.com/transactions/delete";
+    private static final String updateUserURL =
             "https://wheel-app.herokuapp.com/users/self";
 
-    public static final String CONNECTION_FAIL =
+    static final String CONNECTION_FAIL =
             "Connection to server failed! Check your internet connection?";
-    public RequestQueue requestQueue;
+    private RequestQueue requestQueue;
 
     private static WheelAPI mInstance = null;
     private Context mContext;
@@ -92,7 +90,7 @@ public class WheelAPI {
             case UserRegister:
                 endPoint = userRegisterURL;
                 break;
-            case RoomAuth:
+            case RoomJoin:
                 endPoint = roomAuthURL;
                 break;
             case RoomRequest:
@@ -122,20 +120,17 @@ public class WheelAPI {
 
     public Response.Listener<JSONObject> onSuccess(
             final WheelAPIListener responseCallback) {
-        return new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    if (response.getBoolean("success")) {
-                        responseCallback.onSuccess(
-                                response.getJSONObject("data"));
-                    } else {
-                        // Show Error Message
-                        responseCallback.onError(response.getInt("data"));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+        return response -> {
+            try {
+                if (response.getBoolean("success")) {
+                    responseCallback.onSuccess(
+                            response.getJSONObject("data"));
+                } else {
+                    // Show Error Message
+                    responseCallback.onError(response.getInt("data"));
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         };
     }

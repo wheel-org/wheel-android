@@ -31,7 +31,11 @@ public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        WheelClient.initialize(getApplicationContext());
+
+        WheelClient.initialize(getApplicationContext(), new WheelDeeplinkBundle(
+                getIntent().getStringExtra(WheelDeeplinkActivity.KEY_ACTION),
+                getIntent().getStringExtra(WheelDeeplinkActivity.KEY_DATA)));
+
         setContentView(R.layout.activity_splash_screen);
         loadingText = (TextView) findViewById(R.id.splash_loading_text);
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(

@@ -25,22 +25,26 @@ public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", roomId);
         params.put("roomPassword", roomPassword);
+        mFragment.disableButtons();
         mWheelAPI.makeApiRequest(
                 WheelAPI.ApiCall.RoomJoin, params,
                 new WheelAPI.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mFragment.enableButtons();
                     }
 
                     @Override
                     public void onSuccess(JSONObject response) {
                         mListener.onSuccess();
+                        mFragment.dismissDialog();
                     }
 
                     @Override
                     public void onConnectionError() {
                         mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mFragment.enableButtons();
                     }
                 });
     }

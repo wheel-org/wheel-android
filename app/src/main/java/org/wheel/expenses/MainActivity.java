@@ -46,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.drawer_join_room_btn)
     LinearLayout mJoinRoomButton;
 
+    @BindView(R.id.drawer_log_out_btn)
+    LinearLayout mLogoutBtn;
+
     @BindView(R.id.drawer_user_row)
     LinearLayout mUserRowItem;
 
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mPresenter = new MainActivityPresenter(this, WheelClient.getInstance(),
-                WheelAPI.getInstance());
+                WheelAPI.getInstance(), StoredPreferencesManager.getInstance());
 
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_open_drawer);
@@ -112,6 +115,10 @@ public class MainActivity extends AppCompatActivity implements
         });
         mUserRowItem.setOnClickListener(view -> {
             mPresenter.showDefaultUserFragment();
+            mDrawer.closeDrawers();
+        });
+        mLogoutBtn.setOnClickListener(view -> {
+            mPresenter.onLogoutClicked();
             mDrawer.closeDrawers();
         });
         mDrawerListAdapter = new DrawerRoomListAdapter(this);

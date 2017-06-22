@@ -8,8 +8,9 @@ public class ErrorMessage {
             "Username is already taken! Please try another username.",
             "You do not have permission to access this room.",
             "Room password incorrect! Make sure you have the right room!",
-            "The request room was not found!",
-            "You are already in this room!"
+            "The requested room was not found!",
+            "You are already in this room!",
+            "The requested transaction was not found!"
     };
 
     public static String from(int errorCode) {

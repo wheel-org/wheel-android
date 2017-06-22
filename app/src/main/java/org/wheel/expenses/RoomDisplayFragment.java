@@ -1,11 +1,14 @@
 package org.wheel.expenses;
 
-import static android.view.KeyEvent.KEYCODE_DEL;
+import org.wheel.expenses.Util.WheelUtil;
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.Transaction;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +16,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import org.wheel.expenses.Util.WheelUtil;
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.Transaction;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +29,11 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.KeyEvent.KEYCODE_DEL;
+
 public class RoomDisplayFragment extends Fragment implements MainActivityContentFragment,
-        TextWatcher, AdapterView.OnItemClickListener {
+                                                             TextWatcher,
+                                                             AdapterView.OnItemClickListener {
 
     @BindView(R.id.room_display_send_transaction_btn)
     Button mSendBtn;
@@ -73,7 +76,7 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         mPresenter = new RoomDisplayFragmentPresenter(
                 (MainActivity) this.getActivity(),
                 this,
@@ -134,14 +137,49 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
         LayoutInflater layoutInflater = LayoutInflater.from(this.getActivity());
         mUserList.removeAllViews();
         for (Map.Entry<String, Integer> entry : userList.entrySet()) {
-            View v = layoutInflater.inflate(R.layout.room_user_entry, mUserList, true);
+            View v = layoutInflater.inflate(R.layout.room_user_entry, mUserList, false);
             TextView text = (TextView) v.findViewById(R.id.user_entry_text);
+            FrameLayout.LayoutParams layoutParams =
+                    (FrameLayout.LayoutParams) text.getLayoutParams();
+            FrameLayout root = (FrameLayout) v.findViewById(R.id.user_entry_root);
             ProgressBar progressBar = (ProgressBar) v.findViewById(R.id.user_entry_progress);
             text.setText(
                     entry.getKey() + " (" + WheelUtil.getStringFromPrice(entry.getValue()) + ")");
             progressBar.setMax(max);
             progressBar.setProgress(entry.getValue());
+
+            mUserList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v,
+                                           int left,
+                                           int top,
+                                           int right,
+                                           int bottom,
+                                           int oldLeft,
+                                           int oldTop,
+                                           int oldRight,
+                                           int oldBottom) {
+                    int maxWidth = mUserList.getMeasuredWidth();
+                    text.measure(0, 0);
+                    int textWidth = text.getMeasuredWidth();
+                    int padding =
+                            (int) (maxWidth * (entry.getValue() / (double) max)) - (textWidth / 2);
+                    if (padding + (textWidth / 2) > maxWidth - 20) {
+                        layoutParams.gravity = Gravity.RIGHT;
+                        text.setPadding(0, 0, 0, 0);
+                    } else {
+                        layoutParams.gravity = Gravity.LEFT;
+                        text.setPadding(Math.max(0, padding), 0, 0, 0);
+                        text.requestLayout();
+                    }
+                    root.requestLayout();
+                    mUserList.removeOnLayoutChangeListener(this);
+                }
+            });
+
+            mUserList.addView(v);
         }
+        mUserList.requestLayout();
     }
 
     public void setTransactionList(ArrayList<Transaction> list) {

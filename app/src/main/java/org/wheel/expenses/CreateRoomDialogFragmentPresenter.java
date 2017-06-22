@@ -13,13 +13,14 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
     private CreateRoomDialogFragment.CreateRoomDialogFragmentListener mListener;
 
     public CreateRoomDialogFragmentPresenter(CreateRoomDialogFragment createRoomDialogFragment,
-            WheelClient wheelClient, WheelAPI wheelAPI) {
+                                             WheelClient wheelClient, WheelAPI wheelAPI) {
         mFragment = createRoomDialogFragment;
         mWheelClient = wheelClient;
         mWheelAPI = wheelAPI;
     }
 
     public void onCreateRoomClicked(String roomName, String roomPassword) {
+        mFragment.disableButtons();
         Map<String, String> params = new HashMap<>();
         params.put("username", mWheelClient.getCurrentUser().getUsername());
         params.put("password", mWheelClient.getCurrentPassword());
@@ -31,16 +32,19 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
                     @Override
                     public void onError(int errorCode) {
                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mFragment.enableButtons();
                     }
 
                     @Override
                     public void onSuccess(JSONObject response) {
                         mListener.onSuccess();
+                        mFragment.dismissDialog();
                     }
 
                     @Override
                     public void onConnectionError() {
                         mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mFragment.enableButtons();
                     }
                 });
     }

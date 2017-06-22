@@ -1,35 +1,40 @@
 package org.wheel.expenses;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-
 import org.json.JSONObject;
 import org.wheel.expenses.Util.ErrorMessage;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.data.RoomInfo;
 import org.wheel.expenses.data.User;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Intent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivityPresenter implements ActivityLifecycleHandler,
-        CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
-        JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
+                                              CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
+                                              JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
 
     private MainActivity mActivity;
     private WheelClient mWheelClient;
     private WheelAPI mWheelAPI;
+    private StoredPreferencesManager mStoredPreferencesManager;
     private String mLastLoadedRoomID;
     private Fragment mDisplayedFragment;
     private boolean mLoadLock;
 
-    public MainActivityPresenter(MainActivity activity, WheelClient wheelClient,
-            WheelAPI wheelAPI) {
+    public MainActivityPresenter(MainActivity activity,
+                                 WheelClient wheelClient,
+                                 WheelAPI wheelAPI,
+                                 StoredPreferencesManager storedPreferencesManager) {
 
         mActivity = activity;
         mWheelClient = wheelClient;
         mWheelAPI = wheelAPI;
+        mStoredPreferencesManager = storedPreferencesManager;
     }
 
     public void showDefaultUserFragment() {
@@ -74,7 +79,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", roomID);
         mWheelAPI.makeApiRequest(WheelAPI.ApiCall.RoomRequest,
-                params, new WheelAPI.WheelAPIListener() {
+                                 params, new WheelAPI.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
@@ -105,7 +110,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     private ArrayList<DrawerRoomEntry> createDrawerRoomList() {
         ArrayList<RoomInfo> activeRooms =
                 mWheelClient.getCurrentUser()
-                        .getActiveRooms();
+                            .getActiveRooms();
         ArrayList<DrawerRoomEntry> result = new ArrayList<>();
         for (int i = 0; i < activeRooms.size(); i++) {
             result.add(new DrawerRoomEntry(activeRooms.get(i)));
@@ -144,8 +149,8 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     private void updateTextActivity() {
         mActivity.setDrawerText(mWheelClient.getCurrentUser().getName(),
-                mActivity.getString(R.string.drawer_logged_in,
-                        mWheelClient.getCurrentUser().getUsername()));
+                                mActivity.getString(R.string.drawer_logged_in,
+                                                    mWheelClient.getCurrentUser().getUsername()));
         mActivity.updateDrawerList(createDrawerRoomList());
     }
 
@@ -155,7 +160,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         boolean launchDefault = true;
         if (mWheelClient.getWheelDeeplinkBundle() != null) {
             if (mWheelClient.getWheelDeeplinkBundle().getAction()
-                    == WheelDeeplinkBundle.Actions.ROOM) {
+                == WheelDeeplinkBundle.Actions.ROOM) {
                 loadRoom(mWheelClient.getWheelDeeplinkBundle().getData());
                 launchDefault = false;
             }
@@ -175,5 +180,12 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         JoinRoomDialogFragment newFragment = new JoinRoomDialogFragment();
         newFragment.show(mActivity.getFragmentManager(), "dialog");
         newFragment.setListener(this);
+    }
+
+    public void onLogoutClicked() {
+        mStoredPreferencesManager.setSavedPassword("");
+        Intent intent = new Intent(mActivity, LoginActivity.class);
+        mActivity.startActivity(intent);
+        mActivity.finish();
     }
 }

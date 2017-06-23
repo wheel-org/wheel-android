@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements
 
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                updateActivity();
             }
         };
         mDrawer.setDrawerListener(mDrawerToggle);

@@ -46,9 +46,9 @@ public class CreateRoomDialogFragment extends DialogFragment {
                .setPositiveButton(R.string.create_room_create, null)
                .setNegativeButton(R.string.create_room_cancel, null);
         AlertDialog d = builder.create();
-        mPositiveButton = d.getButton(BUTTON_POSITIVE);
-        mNegativeButton = d.getButton(BUTTON_NEGATIVE);
         d.setOnShowListener(dialogInterface -> {
+            mPositiveButton = d.getButton(BUTTON_POSITIVE);
+            mNegativeButton = d.getButton(BUTTON_NEGATIVE);
             mPositiveButton.setEnabled(false);
             mPositiveButton
                     .setOnClickListener(v1 -> mPresenter.onCreateRoomClicked(

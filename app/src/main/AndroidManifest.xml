@@ -35,7 +35,7 @@
         </activity>
         <activity
             android:name=".WheelDeeplinkActivity"
-            android:label="DeepLink">
+            android:label="Wheel">
             <intent-filter android:label="Wheel">
                 <action android:name="android.intent.action.VIEW" />
 

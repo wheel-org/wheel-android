@@ -4,6 +4,7 @@ import android.content.Context;
 
 import org.json.JSONObject;
 import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.RoomInfo;
 import org.wheel.expenses.data.User;
 
 import java.util.HashMap;
@@ -131,6 +132,14 @@ public class WheelClient {
         return mCurrentRoom != null;
     }
 
+    public boolean userInRoom(String roomID) {
+        for (RoomInfo room : mCurrentUser.getActiveRooms()) {
+            if (room.getId().equals(roomID)) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void resetWheelClient() {
         mCurrentUser = null;
         mCurrentPassword = "";

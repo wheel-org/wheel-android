@@ -1,6 +1,5 @@
 package org.wheel.expenses;
 
-import static com.android.volley.Request.Method.DELETE;
 import static com.android.volley.Request.Method.POST;
 
 import android.content.Context;
@@ -106,7 +105,6 @@ public class WheelAPI {
                 endPoint = addTransactionURL;
                 break;
             case DeleteTransaction:
-                methodType = DELETE;
                 endPoint = deleteTransactionURL;
                 break;
         }

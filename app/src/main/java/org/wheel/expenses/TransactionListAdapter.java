@@ -1,65 +1,45 @@
 package org.wheel.expenses;
 
-import android.content.Context;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
-
 import org.wheel.expenses.data.Transaction;
+
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-public class TransactionListAdapter extends BaseAdapter {
-    private final Context context;
-    private ArrayList<Transaction> transactions;
+public class TransactionListAdapter extends RecyclerView.Adapter<TransactionListItemViewHolder> {
+    private ArrayList<Transaction> mTransactions;
+    private RoomDisplayFragmentPresenter mRoomDisplayPresenter;
 
-    public TransactionListAdapter(Context context) {
-        super();
-        this.context = context;
-        this.transactions = new ArrayList<>();
-    }
-
-    public int getCount() {
-        return transactions.size();
-    }
-
-    public Transaction getItem(int arg0) {
-        return transactions.get(arg0);
-    }
-
-    public long getItemId(int position) {
-        return position;
-    }
-
-    public void update(ArrayList<Transaction> values) {
-        this.transactions.clear();
-        this.transactions.addAll(values);
-        Log.v("Values: ", String.valueOf(values.size()));
-        this.notifyDataSetChanged();
+    public TransactionListAdapter(RoomDisplayFragmentPresenter roomDisplayPresenter) {
+        mRoomDisplayPresenter = roomDisplayPresenter;
+        this.mTransactions = new ArrayList<>();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (convertView == null) {
-            LayoutInflater inflater = LayoutInflater.from(context);
-            convertView = inflater.inflate(R.layout.transaction_layout, parent, false);
-        }
-
-        ImageView userT = (ImageView) convertView.findViewById(R.id.userDisplay);
-        TextView priceT = (TextView) convertView.findViewById(R.id.priceDisplay);
-        TextView descT = (TextView) convertView.findViewById(R.id.descDisplay);
-        TextView dateT = (TextView) convertView.findViewById(R.id.dateDisplay);
-        Transaction curr = getItem(position);
-        //userT.setImageDrawable(context.getResources().getDrawable(curr.getUser() == 0 ? R.mipmap.felix_icon : R.mipmap.michael_icon));
-        priceT.setText(curr.getAmount());
-        descT.setText(curr.getDescription());
-        dateT.setText(curr.getDateString());
-
-        return convertView;
+    public TransactionListItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new TransactionListItemViewHolder(LayoutInflater.from(parent.getContext())
+                                                               .inflate(R.layout.transaction_layout,
+                                                                        parent,
+                                                                        false),
+                                                 mRoomDisplayPresenter);
     }
+
+    @Override
+    public void onBindViewHolder(TransactionListItemViewHolder holder, int position) {
+        holder.bindData(mTransactions.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return mTransactions.size();
+    }
+
+    public void update(ArrayList<Transaction> values) {
+        this.mTransactions.clear();
+        this.mTransactions.addAll(values);
+        this.notifyDataSetChanged();
+    }
+
 }

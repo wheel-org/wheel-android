@@ -1,13 +1,5 @@
 package org.wheel.expenses;
 
-import static com.android.volley.Request.Method.POST;
-
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.http.AndroidHttpClient;
-import android.widget.Toast;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,32 +10,41 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.http.AndroidHttpClient;
+import android.widget.Toast;
+
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.android.volley.Request.Method.POST;
+
 
 public class WheelAPI {
-    enum ApiCall {
-        UserAuth, UserRegister, RoomJoin, RoomRequest, RoomCreate,
-        AddTransaction, DeleteTransaction, UpdateUser
-    }
+    static final String baseURL = "https://wheel-app.herokuapp.com";
 
-    private static final String userAuthURL =
-            "https://wheel-app.herokuapp.com/login";
-    private static final String userRegisterURL =
-            "https://wheel-app.herokuapp.com/register";
-    private static final String roomAuthURL =
-            "https://wheel-app.herokuapp.com/rooms/join";
-    private static final String roomRequestURL =
-            "https://wheel-app.herokuapp.com/rooms/get";
-    private static final String roomCreateURL =
-            "https://wheel-app.herokuapp.com/rooms/create";
-    private static final String addTransactionURL =
-            "https://wheel-app.herokuapp.com/transactions/add";
-    private static final String deleteTransactionURL =
-            "https://wheel-app.herokuapp.com/transactions/delete";
-    private static final String updateUserURL =
-            "https://wheel-app.herokuapp.com/users/self";
+    enum ApiCall {
+        UserAuth("/login"),
+        UserRegister("/register"),
+        RoomJoin("/rooms/join"),
+        RoomRequest("/rooms/get"),
+        RoomCreate("/rooms/create"),
+        AddTransaction("/transactions/add"),
+        DeleteTransaction("/transactions/delete"),
+        LeaveRoom("/rooms/leave");
+
+        private String mUrl;
+
+        public String getUrl() {
+            return mUrl;
+        }
+
+        ApiCall(String url) {
+            mUrl = url;
+        }
+    }
 
     static final String CONNECTION_FAIL =
             "Connection to server failed! Check your internet connection?";
@@ -78,42 +79,19 @@ public class WheelAPI {
     }
 
     public void makeApiRequest(WheelAPI.ApiCall callType,
-            Map<String, String> parameters,
-            WheelAPIListener responseCallback) {
-        int methodType = POST;
-        String endPoint = "";
-        switch (callType) {
-            case UserAuth:
-                endPoint = userAuthURL;
-                break;
-            case UserRegister:
-                endPoint = userRegisterURL;
-                break;
-            case RoomJoin:
-                endPoint = roomAuthURL;
-                break;
-            case RoomRequest:
-                endPoint = roomRequestURL;
-                break;
-            case UpdateUser:
-                endPoint = updateUserURL;
-                break;
-            case RoomCreate:
-                endPoint = roomCreateURL;
-                break;
-            case AddTransaction:
-                endPoint = addTransactionURL;
-                break;
-            case DeleteTransaction:
-                endPoint = deleteTransactionURL;
-                break;
-        }
+                               Map<String, String> parameters,
+                               WheelAPIListener responseCallback) {
+        String endPoint = baseURL + callType.getUrl();
+
         if (parameters == null) {
             parameters = new HashMap<>();
         }
         JSONObject params = new JSONObject(parameters);
-        requestQueue.add(new JsonObjectRequest(methodType, endPoint, params,
-                onSuccess(responseCallback), onError(responseCallback)));
+        requestQueue.add(new JsonObjectRequest(POST,
+                                               endPoint,
+                                               params,
+                                               onSuccess(responseCallback),
+                                               onError(responseCallback)));
     }
 
     public Response.Listener<JSONObject> onSuccess(

@@ -19,12 +19,17 @@ public class Room {
         try {
             mName = jsonObject.getString("name");
             mId = jsonObject.getString("id");
+            if (jsonObject.has("admin")) {
+                mAdminUsername = jsonObject.getString("admin");
+            } else {
+                mAdminUsername = "";
+            }
             JSONArray userMap = jsonObject.getJSONArray("users");
             mUsers = new HashMap<>();
             mTransactions = new ArrayList<>();
             for (int i = 0; i < userMap.length(); i++) {
                 mUsers.put(userMap.getJSONObject(i).getString("user"),
-                        userMap.getJSONObject(i).getInt("balance"));
+                           userMap.getJSONObject(i).getInt("balance"));
             }
             JSONArray transactions = jsonObject.getJSONArray("transactions");
             for (int i = 0; i < transactions.length(); i++) {
@@ -50,5 +55,9 @@ public class Room {
 
     public String getId() {
         return mId;
+    }
+
+    public String getAdminUsername() {
+        return mAdminUsername;
     }
 }

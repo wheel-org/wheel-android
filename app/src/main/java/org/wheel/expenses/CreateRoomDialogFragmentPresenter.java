@@ -2,6 +2,7 @@ package org.wheel.expenses;
 
 import org.json.JSONObject;
 import org.wheel.expenses.Util.ErrorMessage;
+import org.wheel.expenses.data.Room;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
 
                     @Override
                     public void onSuccess(JSONObject response) {
+                        mWheelClient.setCurrentRoom(new Room(response));
                         mListener.onSuccess();
                         mFragment.dismissDialog();
                     }

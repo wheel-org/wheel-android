@@ -1,26 +1,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <TextView
                 android:id="@+id/room_display_intro_text"
@@ -41,96 +39,135 @@
 
         </LinearLayout>
 
-        <Button
+        <include layout="@layout/vertical_divider" />
+
+        <LinearLayout
             android:id="@+id/room_display_share_link_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAllCaps="false"
-            tools:text="Share (12345)" />
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical|center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="false"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/ic_share" />
+
+        </LinearLayout>
+
+        <include layout="@layout/vertical_divider" />
+
+        <LinearLayout
+            android:id="@+id/room_display_leave_room_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center_vertical|center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="false"
+                android:tint="@color/colorPrimary"
+                app:srcCompat="@drawable/ic_logout" />
+
+        </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    <include layout="@layout/horizontal_divider" />
 
-        <TextView
-            android:id="@+id/room_display_min_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="Felix ($1.00)" />
-
-        <TextView
-            android:id="@+id/room_display_max_amount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="Felix ($1.00)" />
-    </LinearLayout>
-
-    <LinearLayout
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/room_display_user_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:orientation="vertical">
+        android:layout_height="100dp">
 
-    </LinearLayout>
+    </android.support.v7.widget.RecyclerView>
+
+    <include layout="@layout/horizontal_divider" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/room_display_price_input"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:ellipsize="end"
-            android:ems="10"
-            android:hint="$0.00"
-            android:inputType="numberDecimal"
-            android:singleLine="true"
-            android:textAlignment="textEnd"
-            android:textColor="@android:color/black"
-            android:textStyle="normal|bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/room_display_desc_input"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.5"
-            android:ems="10"
-            android:hint="Uber"
-            android:inputType="textCapSentences" />
+            <EditText
+                android:id="@+id/room_display_price_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.2"
+                android:background="@color/transparent"
+                android:ellipsize="end"
+                android:ems="10"
+                android:hint="$0.00"
+                android:inputType="numberDecimal"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp"
+                android:singleLine="true"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/black"
+                android:textStyle="normal|bold" />
 
-        <Button
-            android:id="@+id/room_display_send_transaction_btn"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:onClick="submitTransaction"
-            android:text="Push" />
+            <include layout="@layout/vertical_divider" />
+
+            <EditText
+                android:id="@+id/room_display_desc_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                android:background="@color/transparent"
+                android:ems="10"
+                android:hint="Uber"
+                android:inputType="textCapSentences"
+                android:paddingEnd="8dp"
+                android:paddingStart="8dp" />
+
+            <include layout="@layout/vertical_divider" />
+            <LinearLayout
+                android:id="@+id/room_display_send_transaction_btn"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical|center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="false"
+                    android:tint="@color/colorPrimary"
+                    app:srcCompat="@drawable/ic_send_transaction" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <include layout="@layout/horizontal_divider" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/room_display_past_transactions"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipe_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ListView
-            android:id="@+id/room_display_past_transactions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

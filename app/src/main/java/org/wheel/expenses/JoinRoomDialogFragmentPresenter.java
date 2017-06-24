@@ -2,6 +2,7 @@ package org.wheel.expenses;
 
 import org.json.JSONObject;
 import org.wheel.expenses.Util.ErrorMessage;
+import org.wheel.expenses.data.Room;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler
     private JoinRoomDialogFragment.JoinRoomDialogFragmentListener mListener;
 
     public JoinRoomDialogFragmentPresenter(JoinRoomDialogFragment createRoomDialogFragment,
-            WheelClient wheelClient, WheelAPI wheelAPI) {
+                                           WheelClient wheelClient, WheelAPI wheelAPI) {
         mFragment = createRoomDialogFragment;
         mWheelClient = wheelClient;
         mWheelAPI = wheelAPI;
@@ -37,6 +38,7 @@ public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler
 
                     @Override
                     public void onSuccess(JSONObject response) {
+                        mWheelClient.setCurrentRoom(new Room(response));
                         mListener.onSuccess();
                         mFragment.dismissDialog();
                     }

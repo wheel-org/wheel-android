@@ -22,6 +22,8 @@
     <string name="delete_transaction_confirmation_message">Are you sure you want to delete transaction for %1$s on %2$s.</string>
     <string name="room_display_id_display">ID: %s</string>
     <string name="room_display_share_room">Share Room URL</string>
+    <string name="room_display_leave_room_title">Leave Room?</string>
+    <string name="room_display_leave_room_user_message">Are you sure you want to leave this room?</string>
 
 
 </resources>

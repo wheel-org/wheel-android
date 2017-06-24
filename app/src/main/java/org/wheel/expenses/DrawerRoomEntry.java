@@ -1,10 +1,10 @@
 package org.wheel.expenses;
 
-import android.view.View;
-import android.widget.TextView;
-
 import org.wheel.expenses.Util.WheelUtil;
 import org.wheel.expenses.data.RoomInfo;
+
+import android.view.View;
+import android.widget.TextView;
 
 class DrawerRoomEntry {
     private RoomInfo mRoomInfo;
@@ -25,4 +25,6 @@ class DrawerRoomEntry {
     public String getRoomId() {
         return mRoomInfo.getId();
     }
+
+    public RoomInfo getRoomInfo() { return mRoomInfo; }
 }

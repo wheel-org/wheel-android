@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 
 
 public class MainActivity extends AppCompatActivity implements
-        AdapterView.OnItemClickListener {
+                                                    AdapterView.OnItemClickListener {
 
     @BindView(R.id.drawer_name)
     TextView mDrawerNameDisp;
@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.main_loading_layout_wrapper)
     FrameLayout mLoadingRefreshLayoutWrapper;
 
+    @BindView(R.id.drawer_swipe_refresh)
+    SwipeRefreshLayout mDrawerRefreshLayout;
+
     @BindView(R.id.splash_loading_text)
     TextView mLoadingText;
 
@@ -83,16 +86,18 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mPresenter = new MainActivityPresenter(this, WheelClient.getInstance(),
-                WheelAPI.getInstance(), StoredPreferencesManager.getInstance());
+        mPresenter = new MainActivityPresenter(this,
+                                               WheelClient.getInstance(),
+                                               WheelAPI.getInstance(),
+                                               StoredPreferencesManager.getInstance());
 
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_open_drawer);
 
         setProgressBarIndeterminateVisibility(false);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer,
-                R.string.drawer_open,
-                R.string.drawer_close)  {
+                                                  R.string.drawer_open,
+                                                  R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
 
@@ -113,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements
             mDrawer.closeDrawers();
         });
         mUserRowItem.setOnClickListener(view -> {
-            mPresenter.showDefaultUserFragment();
+            //mPresenter.showDefaultUserFragment();
             mDrawer.closeDrawers();
         });
         mLogoutBtn.setOnClickListener(view -> {
@@ -123,17 +128,19 @@ public class MainActivity extends AppCompatActivity implements
         mDrawerListAdapter = new DrawerRoomListAdapter(this);
         mDrawerList.setAdapter(mDrawerListAdapter);
         mLoadingRefreshLayout.setOnRefreshListener(() -> mPresenter.loadFailedRefreshTryAgain());
+        mDrawerRefreshLayout.setOnRefreshListener(() -> mPresenter.updateActivity());
         mPresenter.onCreate();
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position,
-            long l) {
+                            long l) {
         DrawerRoomEntry item = (DrawerRoomEntry) adapterView.getItemAtPosition(
                 position);
         mPresenter.onDrawerRoomItemClicked(item);
         mDrawer.closeDrawers();
     }
+
 
     public void updateDrawerList(ArrayList<DrawerRoomEntry> list) {
         mDrawerListAdapter.update(list);
@@ -157,5 +164,9 @@ public class MainActivity extends AppCompatActivity implements
 
     public void updateActivity() {
         mPresenter.updateActivity();
+    }
+
+    public void setDrawerRefreshing(boolean drawerRefreshing) {
+        mDrawerRefreshLayout.setRefreshing(drawerRefreshing);
     }
 }

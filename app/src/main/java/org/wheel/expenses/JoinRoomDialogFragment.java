@@ -1,8 +1,5 @@
 package org.wheel.expenses;
 
-import static android.content.DialogInterface.BUTTON_NEGATIVE;
-import static android.support.v7.app.AlertDialog.BUTTON_POSITIVE;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -16,6 +13,9 @@ import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.DialogInterface.BUTTON_NEGATIVE;
+import static android.support.v7.app.AlertDialog.BUTTON_POSITIVE;
 
 public class JoinRoomDialogFragment extends DialogFragment {
 
@@ -46,6 +46,7 @@ public class JoinRoomDialogFragment extends DialogFragment {
         ButterKnife.bind(this, v);
         if (mInitialValue != null) {
             roomId.setText(mInitialValue);
+            roomId.setEnabled(false);
         }
         builder.setView(v)
                 .setTitle(R.string.join_room)

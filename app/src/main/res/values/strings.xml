@@ -24,6 +24,8 @@
     <string name="room_display_share_room">Share Room URL</string>
     <string name="room_display_leave_room_title">Leave Room?</string>
     <string name="room_display_leave_room_user_message">Are you sure you want to leave this room?</string>
+    <string name="room_display_admin_leave_room_error_message">Looks like there are still other users in the room! As the admin, you can only leave when you\'re the only user in the room.</string>
+    <string name="room_display_admin_leave_room_error_title">Cannot leave room!</string>
 
 
 </resources>

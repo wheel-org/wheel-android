@@ -1,12 +1,13 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.Util.WheelUtil;
-import org.wheel.expenses.data.RoomDisplayUserInfo;
-
+import android.animation.ValueAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import org.wheel.expenses.data.RoomDisplayUserInfo;
+import org.wheel.expenses.util.WheelUtil;
 
 public class RoomDisplayUserListItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -21,10 +22,19 @@ public class RoomDisplayUserListItemViewHolder extends RecyclerView.ViewHolder {
 
     public void update(RoomDisplayUserInfo roomDisplayUserInfo) {
         mTextDisplay.setText(
-                roomDisplayUserInfo.getName() + " (" +
-                WheelUtil.getStringFromPrice(roomDisplayUserInfo.getBalance()) + ")");
-        mProgressBar.setMax(roomDisplayUserInfo.getMax());
-        mProgressBar.setProgress(roomDisplayUserInfo.getBalance());
+                roomDisplayUserInfo.getName() + "\n(" +
+                        WheelUtil.getStringFromPrice(roomDisplayUserInfo.getBalance()) + ")");
+        ValueAnimator valueAnimatorMax = ValueAnimator.ofInt(mProgressBar.getMax(),
+                roomDisplayUserInfo.getMax());
+        valueAnimatorMax.setDuration(1000);
+        valueAnimatorMax.addUpdateListener(
+                v -> mProgressBar.setMax((int) v.getAnimatedValue()));
+        valueAnimatorMax.start();
+        ValueAnimator valueAnimatorProgress = ValueAnimator.ofInt(mProgressBar.getProgress(),
+                roomDisplayUserInfo.getBalance());
+        valueAnimatorProgress.setDuration(1000);
+        valueAnimatorProgress.addUpdateListener(
+                v -> mProgressBar.setProgress((int) v.getAnimatedValue()));
+        valueAnimatorProgress.start();
     }
-
 }

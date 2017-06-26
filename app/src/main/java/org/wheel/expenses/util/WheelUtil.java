@@ -1,4 +1,4 @@
-package org.wheel.expenses.Util;
+package org.wheel.expenses.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

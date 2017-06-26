@@ -1,18 +1,27 @@
 package org.wheel.expenses;
 
+import static android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_OPEN;
+import static android.support.v4.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
+
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
+
+import org.wheel.expenses.data.RoomInfo;
+import org.wheel.expenses.util.RecyclerViewUtil;
 
 import java.util.ArrayList;
 
@@ -20,8 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity implements
-                                                    AdapterView.OnItemClickListener {
+public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.drawer_name)
     TextView mDrawerNameDisp;
@@ -30,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     TextView mDrawerUsernameDisp;
 
     @BindView(R.id.drawer_listview)
-    ListView mDrawerList;
+    RecyclerView mDrawerList;
 
     @BindView(R.id.main_toolbar)
     Toolbar mToolbar;
@@ -64,9 +72,14 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.splash_loading_text)
     TextView mLoadingText;
 
-    DrawerRoomListAdapter mDrawerListAdapter;
+    @BindView(R.id.navigation_view)
+    NavigationView mNavigationView;
+
+    private DrawerRoomListAdapter mDrawerListAdapter;
 
     private MainActivityPresenter mPresenter;
+
+    private boolean mIsDrawerLocked = false;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -87,20 +100,19 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mPresenter = new MainActivityPresenter(this,
-                                               WheelClient.getInstance(),
-                                               WheelAPI.getInstance(),
-                                               StoredPreferencesManager.getInstance());
+                WheelClient.getInstance(),
+                WheelAPI.getInstance(),
+                StoredPreferencesManager.getInstance());
 
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_open_drawer);
-
+        showLargeDrawer();
         setProgressBarIndeterminateVisibility(false);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer,
-                                                  R.string.drawer_open,
-                                                  R.string.drawer_close) {
+                R.string.drawer_open,
+                R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-
             }
 
             public void onDrawerOpened(View drawerView) {
@@ -108,41 +120,32 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
         mDrawer.setDrawerListener(mDrawerToggle);
-        mDrawerList.setOnItemClickListener(this);
         mCreateRoomButton.setOnClickListener(view -> {
             mPresenter.onCreateRoomClicked();
-            mDrawer.closeDrawers();
+            closeDrawerIfNotLocked();
         });
         mJoinRoomButton.setOnClickListener(view -> {
             mPresenter.onJoinRoomClicked();
-            mDrawer.closeDrawers();
+            closeDrawerIfNotLocked();
         });
         mUserRowItem.setOnClickListener(view -> {
-            //mPresenter.showDefaultUserFragment();
-            mDrawer.closeDrawers();
+            closeDrawerIfNotLocked();
         });
         mLogoutBtn.setOnClickListener(view -> {
             mPresenter.onLogoutClicked();
-            mDrawer.closeDrawers();
+            closeDrawerIfNotLocked();
         });
-        mDrawerListAdapter = new DrawerRoomListAdapter(this);
+        mDrawerListAdapter = new DrawerRoomListAdapter(mPresenter);
+        mDrawerList.setLayoutManager(new LinearLayoutManager(this));
         mDrawerList.setAdapter(mDrawerListAdapter);
+        RecyclerViewUtil.Setup(mDrawerList);
         mLoadingRefreshLayout.setOnRefreshListener(() -> mPresenter.loadFailedRefreshTryAgain());
         mDrawerRefreshLayout.setOnRefreshListener(() -> mPresenter.updateActivity());
         mPresenter.onCreate();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position,
-                            long l) {
-        DrawerRoomEntry item = (DrawerRoomEntry) adapterView.getItemAtPosition(
-                position);
-        mPresenter.onDrawerRoomItemClicked(item);
-        mDrawer.closeDrawers();
-    }
 
-
-    public void updateDrawerList(ArrayList<DrawerRoomEntry> list) {
+    public void updateDrawerList(ArrayList<RoomInfo> list) {
         mDrawerListAdapter.update(list);
     }
 
@@ -168,5 +171,41 @@ public class MainActivity extends AppCompatActivity implements
 
     public void setDrawerRefreshing(boolean drawerRefreshing) {
         mDrawerRefreshLayout.setRefreshing(drawerRefreshing);
+    }
+
+    public void showLargeDrawer() {
+        mIsDrawerLocked = true;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        DrawerLayout.LayoutParams params =
+                (DrawerLayout.LayoutParams) mNavigationView.getLayoutParams();
+        params.width = metrics.widthPixels;
+        mNavigationView.setLayoutParams(params);
+        mDrawer.setDrawerLockMode(LOCK_MODE_LOCKED_OPEN);
+    }
+
+    public void showSmallDrawer() {
+        mIsDrawerLocked = false;
+        mNavigationView.setLayoutParams(new DrawerLayout.LayoutParams(
+                DrawerLayout.LayoutParams.WRAP_CONTENT,
+                DrawerLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT));
+        mDrawer.setDrawerLockMode(LOCK_MODE_UNLOCKED);
+    }
+
+    public void closeDrawerIfNotLocked() {
+        if (!mIsDrawerLocked) mDrawer.closeDrawers();
+    }
+
+    public void hideRoomFragment() {
+        mPresenter.hideRoomFragment();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mIsDrawerLocked) {
+            super.onBackPressed();
+        } else {
+            showLargeDrawer();
+        }
     }
 }

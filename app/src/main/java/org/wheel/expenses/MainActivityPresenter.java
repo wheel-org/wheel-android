@@ -1,33 +1,34 @@
 package org.wheel.expenses;
 
-import org.json.JSONObject;
-import org.wheel.expenses.Util.ErrorMessage;
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.RoomInfo;
-
 import android.content.Intent;
 import android.support.v4.app.FragmentTransaction;
+
+import org.json.JSONObject;
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.util.ErrorMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivityPresenter implements ActivityLifecycleHandler,
-                                              CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
-                                              JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
+        CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
+        JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
 
     private MainActivity mActivity;
     private WheelClient mWheelClient;
     private WheelAPI mWheelAPI;
     private StoredPreferencesManager mStoredPreferencesManager;
     private String mLastLoadedRoomID;
+
     private RoomDisplayFragment mDisplayedFragment;
+
     private boolean mLoadLock;
 
     public MainActivityPresenter(MainActivity activity,
-                                 WheelClient wheelClient,
-                                 WheelAPI wheelAPI,
-                                 StoredPreferencesManager storedPreferencesManager) {
+            WheelClient wheelClient,
+            WheelAPI wheelAPI,
+            StoredPreferencesManager storedPreferencesManager) {
 
         mActivity = activity;
         mWheelClient = wheelClient;
@@ -35,24 +36,8 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         mStoredPreferencesManager = storedPreferencesManager;
     }
 
-    /*public void showDefaultUserFragment() {
-        showUserFragment(mWheelClient.getCurrentUser());
-    }*/
-
-    /*public void showUserFragment(User user) {
-        if (mDisplayedFragment != null) {
-            mActivity.getFragmentManager().beginTransaction().remove(mDisplayedFragment).commit();
-        }
-        UserDisplayFragment myf = new UserDisplayFragment();
-        myf.setUserToDisplay(user);
-        FragmentTransaction transaction = mActivity.getFragmentManager().beginTransaction();
-        transaction.add(R.id.main_fragment_container, myf);
-        transaction.commit();
-        mDisplayedFragment = myf;
-        mActivity.hideLoading();
-    }*/
-
     public void updateRoomFragment() {
+        mActivity.showSmallDrawer();
         if (mDisplayedFragment == null) {
             mDisplayedFragment = new RoomDisplayFragment();
             FragmentTransaction
@@ -62,14 +47,20 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         }
         mActivity.hideLoading();
         mDisplayedFragment.setRoomToDisplay(mWheelClient.getCurrentRoom());
-        mLastLoadedRoomID = mWheelClient.getCurrentRoom().getId();
     }
 
     public void loadFailedRefreshTryAgain() {
-        loadRoom(mLastLoadedRoomID);
+        makeLoadRoomRequest(mLastLoadedRoomID);
     }
 
     public void loadRoom(String roomID) {
+        if (mDisplayedFragment != null) {
+            mDisplayedFragment.updateTransactionList(new ArrayList<>());
+        }
+        makeLoadRoomRequest(roomID);
+    }
+
+    private void makeLoadRoomRequest(String roomID) {
         if (mLoadLock || roomID.isEmpty()) {
             return;
         }
@@ -80,7 +71,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", roomID);
         mWheelAPI.makeApiRequest(WheelAPI.ApiCall.RoomRequest,
-                                 params, new WheelAPI.WheelAPIListener() {
+                params, new WheelAPI.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
@@ -100,22 +91,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
                         mLoadLock = false;
                     }
                 });
-
-    }
-
-    private ArrayList<DrawerRoomEntry> createDrawerRoomList() {
-        ArrayList<RoomInfo> activeRooms =
-                mWheelClient.getCurrentUser()
-                            .getActiveRooms();
-        ArrayList<DrawerRoomEntry> result = new ArrayList<>();
-        for (int i = 0; i < activeRooms.size(); i++) {
-            result.add(new DrawerRoomEntry(activeRooms.get(i)));
-        }
-        return result;
-    }
-
-    public void onDrawerRoomItemClicked(DrawerRoomEntry item) {
-        loadRoom(item.getRoomId());
+        mLastLoadedRoomID = roomID;
     }
 
     public void onCreateRoomClicked() {
@@ -148,9 +124,9 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     private void updateTextActivity() {
         mActivity.setDrawerText(mWheelClient.getCurrentUser().getName(),
-                                mActivity.getString(R.string.drawer_logged_in,
-                                                    mWheelClient.getCurrentUser().getUsername()));
-        mActivity.updateDrawerList(createDrawerRoomList());
+                mActivity.getString(R.string.drawer_logged_in,
+                        mWheelClient.getCurrentUser().getUsername()));
+        mActivity.updateDrawerList(mWheelClient.getCurrentUser().getActiveRooms());
     }
 
     @Override
@@ -159,7 +135,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         boolean launchDefault = true;
         if (mWheelClient.getWheelDeeplinkBundle() != null) {
             if (mWheelClient.getWheelDeeplinkBundle().getAction()
-                == WheelDeeplinkBundle.Actions.ROOM) {
+                    == WheelDeeplinkBundle.Actions.ROOM) {
                 String roomID = mWheelClient.getWheelDeeplinkBundle().getData();
                 if (!mWheelClient.userInRoom(roomID)) {
                     onJoinRoomClickedWithParam(roomID);
@@ -189,7 +165,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     }
 
     public void onJoinRoomClicked() {
-        onJoinRoomClickedWithParam("");
+        onJoinRoomClickedWithParam(null);
     }
 
     public void onLogoutClicked() {
@@ -197,5 +173,20 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         Intent intent = new Intent(mActivity, LoginActivity.class);
         mActivity.startActivity(intent);
         mActivity.finish();
+    }
+
+    public void hideRoomFragment() {
+        if (mDisplayedFragment != null) {
+            mActivity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(mDisplayedFragment)
+                    .commit();
+            mDisplayedFragment = null;
+        }
+        mActivity.showLargeDrawer();
+    }
+
+    public void closeDrawerIfNotLocked() {
+        mActivity.closeDrawerIfNotLocked();
     }
 }

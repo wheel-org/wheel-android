@@ -12,7 +12,7 @@ import org.wheel.expenses.data.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class UserDisplayFragment extends Fragment implements MainActivityContentFragment {
+public class UserDisplayFragment extends Fragment {
 
     @BindView(R.id.user_display_username)
     TextView usernameDisplay;

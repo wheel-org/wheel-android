@@ -47,6 +47,10 @@ public class JoinRoomDialogFragment extends DialogFragment {
         if (mInitialValue != null) {
             roomId.setText(mInitialValue);
             roomId.setEnabled(false);
+            roomPassword.requestFocus();
+        }
+        else {
+            roomId.requestFocus();
         }
         builder.setView(v)
                 .setTitle(R.string.join_room)

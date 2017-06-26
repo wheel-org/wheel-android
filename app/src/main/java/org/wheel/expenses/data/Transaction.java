@@ -2,18 +2,17 @@ package org.wheel.expenses.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wheel.expenses.Util.WheelUtil;
+import org.wheel.expenses.AutoDiffItem;
+import org.wheel.expenses.util.WheelUtil;
 
 import java.util.Date;
 
-public class Transaction {
+public class Transaction implements AutoDiffItem {
     private String mUser;
     private int mAmount;
     private String mDescription;
     private Date mCreatedDate;
     private String mId;
-
-
 
     public Transaction(JSONObject jsonObject) {
         try {

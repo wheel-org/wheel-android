@@ -1,4 +1,4 @@
-package org.wheel.expenses.Util;
+package org.wheel.expenses.util;
 
 public class ErrorMessage {
     public final static int NOT_YOUR_TRANSACTION_ERROR = 10;

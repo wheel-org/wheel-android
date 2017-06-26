@@ -1,7 +1,7 @@
 package org.wheel.expenses;
 
 import org.json.JSONObject;
-import org.wheel.expenses.Util.ErrorMessage;
+import org.wheel.expenses.util.ErrorMessage;
 import org.wheel.expenses.data.Room;
 
 import java.util.HashMap;

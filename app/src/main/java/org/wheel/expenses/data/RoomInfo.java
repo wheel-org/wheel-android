@@ -2,8 +2,9 @@ package org.wheel.expenses.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wheel.expenses.AutoDiffItem;
 
-public class RoomInfo {
+public class RoomInfo implements AutoDiffItem {
     private int mBalanceByUser;
     private String mId;
     private String mName;

@@ -1,4 +1,4 @@
-package org.wheel.expenses.Util;
+package org.wheel.expenses.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

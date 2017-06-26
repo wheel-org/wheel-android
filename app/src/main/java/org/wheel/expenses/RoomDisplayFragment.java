@@ -1,9 +1,6 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.Util.WheelUtil;
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.RoomDisplayUserInfo;
-import org.wheel.expenses.data.Transaction;
+import static android.view.KeyEvent.KEYCODE_DEL;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +16,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.RoomDisplayUserInfo;
+import org.wheel.expenses.data.Transaction;
+import org.wheel.expenses.util.RecyclerViewUtil;
+import org.wheel.expenses.util.WheelUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -26,10 +29,8 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.view.KeyEvent.KEYCODE_DEL;
-
-public class RoomDisplayFragment extends Fragment implements MainActivityContentFragment,
-                                                             TextWatcher {
+public class RoomDisplayFragment extends Fragment implements
+        TextWatcher {
 
     @BindView(R.id.room_display_send_transaction_btn)
     LinearLayout mSendBtn;
@@ -70,7 +71,7 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         mPresenter = new RoomDisplayFragmentPresenter(
                 (MainActivity) this.getActivity(),
                 this,
@@ -82,11 +83,12 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
         mTransactionListAdapter = new TransactionListAdapter(mPresenter);
         mTransactionsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mTransactionsRecyclerView.setAdapter(mTransactionListAdapter);
+        RecyclerViewUtil.Setup(mTransactionsRecyclerView);
 
         mRoomDisplayUserListAdapter = new RoomDisplayUserListAdapter();
         mUserListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                                                                       LinearLayoutManager.HORIZONTAL,
-                                                                       false));
+                LinearLayoutManager.HORIZONTAL,
+                false));
         mUserListRecyclerView.setAdapter(mRoomDisplayUserListAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter);
@@ -134,26 +136,30 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
     public void setUserListRecyclerView(Map<String, Integer> userListRecyclerView) {
         ArrayList<RoomDisplayUserInfo> roomDisplayUserInfos = new ArrayList<>();
         int maxValue = Collections.max(userListRecyclerView.values());
-        int max = (int) Math.pow(10, Math.ceil(Math.log10(maxValue)));
+        int max = Math.max(10, (int) Math.pow(10, Math.ceil(Math.log10(maxValue))));
         for (Map.Entry<String, Integer> entry : userListRecyclerView.entrySet()) {
             roomDisplayUserInfos.add(new RoomDisplayUserInfo(entry.getKey(),
-                                                             entry.getValue(),
-                                                             max));
+                    entry.getValue(),
+                    max));
         }
         mRoomDisplayUserListAdapter.update(roomDisplayUserInfos);
     }
 
-    public void setTransactionList(ArrayList<Transaction> list) {
+    public void updateTransactionList(ArrayList<Transaction> list) {
         Collections.sort(list, (t1, t2) -> t2.getDate().compareTo(t1.getDate()));
         mTransactionListAdapter.update(list);
     }
 
-    public void enableSendBtn() {
+    public void enableSendBtnAndTextboxes() {
         mSendBtn.setEnabled(true);
+        mPriceInput.setEnabled(true);
+        mDescInput.setEnabled(true);
     }
 
-    public void disableSendBtn() {
+    public void disableSendBtnAndTextboxes() {
         mSendBtn.setEnabled(false);
+        mPriceInput.setEnabled(false);
+        mDescInput.setEnabled(false);
     }
 
     public void enableTransactionListInteraction() {
@@ -201,5 +207,13 @@ public class RoomDisplayFragment extends Fragment implements MainActivityContent
 
     public void showRefreshing() {
         mSwipeRefreshLayout.setRefreshing(true);
+    }
+
+    public void enableSendBtn() {
+        mSendBtn.setEnabled(true);
+    }
+
+    public void disableSendBtn() {
+        mSendBtn.setEnabled(false);
     }
 }

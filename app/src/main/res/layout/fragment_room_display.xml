@@ -81,25 +81,28 @@
         </LinearLayout>
     </LinearLayout>
 
+
     <include layout="@layout/horizontal_divider" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/room_display_user_list"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="120dp">
 
     </android.support.v7.widget.RecyclerView>
 
-    <include layout="@layout/horizontal_divider" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <include layout="@layout/horizontal_divider" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:elevation="4dp"
             android:orientation="horizontal">
 
             <EditText
@@ -134,6 +137,7 @@
                 android:paddingStart="8dp" />
 
             <include layout="@layout/vertical_divider" />
+
             <LinearLayout
                 android:id="@+id/room_display_send_transaction_btn"
                 android:layout_width="50dp"
@@ -155,19 +159,19 @@
         </LinearLayout>
 
         <include layout="@layout/horizontal_divider" />
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/room_display_past_transactions"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </android.support.v4.widget.SwipeRefreshLayout>
-
     </LinearLayout>
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/room_display_past_transactions"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

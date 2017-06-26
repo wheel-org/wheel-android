@@ -1,50 +1,29 @@
 package org.wheel.expenses;
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.View;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
-import java.util.ArrayList;
+import org.wheel.expenses.data.RoomInfo;
 
-public class DrawerRoomListAdapter extends BaseAdapter {
-    private ArrayList<DrawerRoomEntry> mDrawerRoomEntryList;
-    private Context mContext;
+public class DrawerRoomListAdapter extends
+        AutoDiffAdapter<DrawerRoomEntryViewHolder, RoomInfo> {
 
-    public DrawerRoomListAdapter(Context context) {
-        mContext = context;
-        mDrawerRoomEntryList = new ArrayList<>();
-    }
+    private MainActivityPresenter mMainFragmentPresenter;
 
-    public void update(ArrayList<DrawerRoomEntry> newList) {
-        mDrawerRoomEntryList.clear();
-        mDrawerRoomEntryList.addAll(newList);
-        notifyDataSetChanged();
+    public DrawerRoomListAdapter(MainActivityPresenter mainFragmentPresenter) {
+        mMainFragmentPresenter = mainFragmentPresenter;
     }
 
     @Override
-    public int getCount() {
-        return mDrawerRoomEntryList.size();
+    public DrawerRoomEntryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new DrawerRoomEntryViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.drawer_room_entry,
+                        parent,
+                        false), mMainFragmentPresenter);
     }
 
     @Override
-    public Object getItem(int i) {
-        return mDrawerRoomEntryList.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return mDrawerRoomEntryList.get(i).getRoomId().hashCode();
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        if (convertView == null) {
-            convertView = ((Activity) mContext).getLayoutInflater().inflate(
-                    R.layout.drawer_room_entry, parent, false);
-        }
-        mDrawerRoomEntryList.get(position).bindData(convertView);
-        return convertView;
+    public void onBindViewHolder(DrawerRoomEntryViewHolder holder, int position) {
+        holder.update(getItem(position));
     }
 }

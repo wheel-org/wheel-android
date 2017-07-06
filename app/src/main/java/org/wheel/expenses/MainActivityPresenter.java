@@ -1,19 +1,22 @@
 package org.wheel.expenses;
 
-import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
-
 import org.json.JSONObject;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.util.ErrorMessage;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
+
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivityPresenter implements ActivityLifecycleHandler,
-        CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
-        JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
+                                              CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
+                                              JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
 
     private MainActivity mActivity;
     private WheelClient mWheelClient;
@@ -26,9 +29,9 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     private boolean mLoadLock;
 
     public MainActivityPresenter(MainActivity activity,
-            WheelClient wheelClient,
-            WheelAPI wheelAPI,
-            StoredPreferencesManager storedPreferencesManager) {
+                                 WheelClient wheelClient,
+                                 WheelAPI wheelAPI,
+                                 StoredPreferencesManager storedPreferencesManager) {
 
         mActivity = activity;
         mWheelClient = wheelClient;
@@ -71,7 +74,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", roomID);
         mWheelAPI.makeApiRequest(WheelAPI.ApiCall.RoomRequest,
-                params, new WheelAPI.WheelAPIListener() {
+                                 params, new WheelAPI.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
@@ -124,29 +127,25 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     private void updateTextActivity() {
         mActivity.setDrawerText(mWheelClient.getCurrentUser().getName(),
-                mActivity.getString(R.string.drawer_logged_in,
-                        mWheelClient.getCurrentUser().getUsername()));
+                                mActivity.getString(R.string.drawer_logged_in,
+                                                    mWheelClient.getCurrentUser().getUsername()));
         mActivity.updateDrawerList(mWheelClient.getCurrentUser().getActiveRooms());
+        mActivity.setDrawerPicture(mWheelClient.getCurrentUser().getProfilePicture());
     }
 
     @Override
     public void onCreate() {
         updateTextActivity();
-        boolean launchDefault = true;
         if (mWheelClient.getWheelDeeplinkBundle() != null) {
             if (mWheelClient.getWheelDeeplinkBundle().getAction()
-                    == WheelDeeplinkBundle.Actions.ROOM) {
+                == WheelDeeplinkBundle.Actions.ROOM) {
                 String roomID = mWheelClient.getWheelDeeplinkBundle().getData();
                 if (!mWheelClient.userInRoom(roomID)) {
                     onJoinRoomClickedWithParam(roomID);
                 } else {
                     loadRoom(mWheelClient.getWheelDeeplinkBundle().getData());
-                    launchDefault = false;
                 }
             }
-        }
-        if (launchDefault) {
-            //showDefaultUserFragment();
         }
         mWheelClient.setWheelDeeplinkBundle(null);
     }
@@ -178,9 +177,9 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     public void hideRoomFragment() {
         if (mDisplayedFragment != null) {
             mActivity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(mDisplayedFragment)
-                    .commit();
+                     .beginTransaction()
+                     .remove(mDisplayedFragment)
+                     .commit();
             mDisplayedFragment = null;
         }
         mActivity.showLargeDrawer();
@@ -188,5 +187,35 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     public void closeDrawerIfNotLocked() {
         mActivity.closeDrawerIfNotLocked();
+    }
+
+    public void updateUserImage(Bitmap bitmap) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+        String encoded = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        Map<String, String> params = new HashMap<>();
+        params.put("username", mWheelClient.getCurrentUsername());
+        params.put("password", mWheelClient.getCurrentPassword());
+        params.put("picture", encoded);
+        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.UpdatePicture,
+                                 params,
+                                 new WheelAPI.WheelAPIListener() {
+                                     @Override
+                                     public void onError(int errorCode) {
+                                         mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                                     }
+
+                                     @Override
+                                     public void onSuccess(JSONObject response) {
+                                         mWheelClient.updatePicture(encoded);
+                                         updateActivity();
+                                     }
+
+                                     @Override
+                                     public void onConnectionError() {
+                                         mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                                     }
+                                 });
     }
 }

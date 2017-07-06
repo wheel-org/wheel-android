@@ -1,20 +1,20 @@
 package org.wheel.expenses;
 
-import static org.wheel.expenses.util.ErrorMessage.NOT_YOUR_TRANSACTION_ERROR;
+import org.json.JSONObject;
+import org.wheel.expenses.data.Transaction;
+import org.wheel.expenses.data.UserInfo;
+import org.wheel.expenses.util.DrawableTinter;
+import org.wheel.expenses.util.ErrorMessage;
+import org.wheel.expenses.util.WheelUtil;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 
-import org.json.JSONObject;
-import org.wheel.expenses.data.Transaction;
-import org.wheel.expenses.util.DrawableTinter;
-import org.wheel.expenses.util.ErrorMessage;
-import org.wheel.expenses.util.WheelUtil;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
+import static org.wheel.expenses.util.ErrorMessage.NOT_YOUR_TRANSACTION_ERROR;
 
 class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
         OnRefreshListener {
@@ -39,7 +39,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
     public void updateData() {
         mFragment.setRoomHeaderText(mWheelClient.getCurrentRoom().getName());
-        Map<String, Integer> users = mWheelClient.getCurrentRoom().getUsers();
+        ArrayList<UserInfo> users = mWheelClient.getCurrentRoom().getUsers();
         mFragment.setUserListRecyclerView(users);
 
         ArrayList<Transaction> transactions = mWheelClient.getCurrentRoom().getTransactions();

@@ -1,11 +1,11 @@
 package org.wheel.expenses;
 
-import android.content.Context;
-
 import org.json.JSONObject;
 import org.wheel.expenses.data.Room;
 import org.wheel.expenses.data.RoomInfo;
 import org.wheel.expenses.data.User;
+
+import android.content.Context;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,31 +61,31 @@ public class WheelClient {
         params.put("username", mCurrentUsername);
         params.put("password", mCurrentPassword);
         WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.UserAuth,
-                params,
-                new WheelAPI.WheelAPIListener() {
-                    @Override
-                    public void onError(int errorCode) {
-                        if (callback != null) {
-                            callback.onError(errorCode);
-                        }
-                    }
+                                              params,
+                                              new WheelAPI.WheelAPIListener() {
+                                                  @Override
+                                                  public void onError(int errorCode) {
+                                                      if (callback != null) {
+                                                          callback.onError(errorCode);
+                                                      }
+                                                  }
 
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        setCurrentUser(new User(response),
-                                mCurrentPassword);
-                        if (callback != null) {
-                            callback.onSuccess(response);
-                        }
-                    }
+                                                  @Override
+                                                  public void onSuccess(JSONObject response) {
+                                                      setCurrentUser(new User(response),
+                                                                     mCurrentPassword);
+                                                      if (callback != null) {
+                                                          callback.onSuccess(response);
+                                                      }
+                                                  }
 
-                    @Override
-                    public void onConnectionError() {
-                        if (callback != null) {
-                            callback.onConnectionError();
-                        }
-                    }
-                });
+                                                  @Override
+                                                  public void onConnectionError() {
+                                                      if (callback != null) {
+                                                          callback.onConnectionError();
+                                                      }
+                                                  }
+                                              });
     }
 
     public void updateCurrentRoom(final WheelAPI.WheelAPIListener callback) {
@@ -94,30 +94,30 @@ public class WheelClient {
         params.put("password", mCurrentPassword);
         params.put("id", mCurrentRoom.getId());
         WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.RoomRequest,
-                params,
-                new WheelAPI.WheelAPIListener() {
-                    @Override
-                    public void onError(int errorCode) {
-                        if (callback != null) {
-                            callback.onError(errorCode);
-                        }
-                    }
+                                              params,
+                                              new WheelAPI.WheelAPIListener() {
+                                                  @Override
+                                                  public void onError(int errorCode) {
+                                                      if (callback != null) {
+                                                          callback.onError(errorCode);
+                                                      }
+                                                  }
 
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        setCurrentRoom(new Room(response));
-                        if (callback != null) {
-                            callback.onSuccess(response);
-                        }
-                    }
+                                                  @Override
+                                                  public void onSuccess(JSONObject response) {
+                                                      setCurrentRoom(new Room(response));
+                                                      if (callback != null) {
+                                                          callback.onSuccess(response);
+                                                      }
+                                                  }
 
-                    @Override
-                    public void onConnectionError() {
-                        if (callback != null) {
-                            callback.onConnectionError();
-                        }
-                    }
-                });
+                                                  @Override
+                                                  public void onConnectionError() {
+                                                      if (callback != null) {
+                                                          callback.onConnectionError();
+                                                      }
+                                                  }
+                                              });
     }
 
     public String getCurrentUsername() {
@@ -140,6 +140,7 @@ public class WheelClient {
         }
         return false;
     }
+
     public void resetWheelClient() {
         mCurrentUser = null;
         mCurrentPassword = "";
@@ -152,5 +153,18 @@ public class WheelClient {
 
     public void setWheelDeeplinkBundle(WheelDeeplinkBundle wheelDeeplinkBundle) {
         mWheelDeeplinkBundle = wheelDeeplinkBundle;
+    }
+
+    public void updatePicture(String bitmap) {
+        mCurrentUser.setProfilePicture(bitmap);
+    }
+
+    public String getProfilePictureFromUsername(String user) {
+        for (int i = 0; i < getCurrentRoom().getUsers().size(); i++) {
+            if (getCurrentRoom().getUsers().get(i).getUsername().equals(user)) {
+                return getCurrentRoom().getUsers().get(i).getProfilePicture();
+            }
+        }
+        return "";
     }
 }

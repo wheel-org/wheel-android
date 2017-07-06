@@ -1,5 +1,12 @@
 package org.wheel.expenses.util;
 
+import org.wheel.expenses.R;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.widget.ImageView;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,6 +19,7 @@ public class WheelUtil {
         final String roomShareUrl = "http://wheel-app.herokuapp.com/app/room/%s";
         return String.format(roomShareUrl, roomID);
     }
+
     public static String getStringFromPrice(int price) {
         return "$" + (price / 100) + "." + String.format(Locale.ENGLISH, "%02d", price % 100);
     }
@@ -40,12 +48,26 @@ public class WheelUtil {
     }
 
     public static int getPriceFromString(String price) {
-        if (price.isEmpty()) return 0;
+        if (price.isEmpty()) {
+            return 0;
+        }
         return Integer.parseInt(price.replaceAll("[^\\d]", ""));
     }
 
     public static String getFriendlyDateString(Date date) {
         return FriendlyDateFormatter.createFriendlyDate(date);
+    }
+
+    public static void setUserProfilePicture(ImageView imageView, String encoded) {
+        if (encoded.isEmpty()) {
+            imageView.setImageDrawable(imageView.getResources()
+                                                .getDrawable(R.drawable.default_user));
+        } else {
+            byte[] decodedString = Base64.decode(encoded, Base64.DEFAULT);
+            Bitmap decodedByte =
+                    BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+            imageView.setImageBitmap(decodedByte);
+        }
     }
 
 

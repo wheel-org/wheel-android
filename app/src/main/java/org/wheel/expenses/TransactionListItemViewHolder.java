@@ -1,11 +1,12 @@
 package org.wheel.expenses;
 
+import org.wheel.expenses.data.Transaction;
+import org.wheel.expenses.util.WheelUtil;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.wheel.expenses.data.Transaction;
 
 public class TransactionListItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -16,7 +17,7 @@ public class TransactionListItemViewHolder extends RecyclerView.ViewHolder {
     private RoomDisplayFragmentPresenter mRoomDisplayFragmentPresenter;
 
     public TransactionListItemViewHolder(View itemView,
-            RoomDisplayFragmentPresenter roomDisplayFragmentPresenter) {
+                                         RoomDisplayFragmentPresenter roomDisplayFragmentPresenter) {
         super(itemView);
         mUserT = (ImageView) itemView.findViewById(R.id.userDisplay);
         mPriceT = (TextView) itemView.findViewById(R.id.priceDisplay);
@@ -26,6 +27,9 @@ public class TransactionListItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bindData(Transaction transaction) {
+        WheelUtil.setUserProfilePicture(mUserT,
+                                        WheelClient.getInstance()
+                                                   .getProfilePictureFromUsername(transaction.getUser()));
         mPriceT.setText(transaction.getAmount());
         mDescT.setText(transaction.getDescription());
         mDateT.setText(transaction.getDateString());

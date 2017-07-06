@@ -33,7 +33,8 @@ public class WheelAPI {
         RoomCreate("/rooms/create"),
         AddTransaction("/transactions/add"),
         DeleteTransaction("/transactions/delete"),
-        LeaveRoom("/rooms/leave");
+        LeaveRoom("/rooms/leave"),
+        UpdatePicture("/picture");
 
         private String mUrl;
 

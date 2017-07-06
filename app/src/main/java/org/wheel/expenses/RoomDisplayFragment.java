@@ -1,6 +1,10 @@
 package org.wheel.expenses;
 
-import static android.view.KeyEvent.KEYCODE_DEL;
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.Transaction;
+import org.wheel.expenses.data.UserInfo;
+import org.wheel.expenses.util.RecyclerViewUtil;
+import org.wheel.expenses.util.WheelUtil;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,21 +20,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.RoomDisplayUserInfo;
-import org.wheel.expenses.data.Transaction;
-import org.wheel.expenses.util.RecyclerViewUtil;
-import org.wheel.expenses.util.WheelUtil;
-
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.view.KeyEvent.KEYCODE_DEL;
+
 public class RoomDisplayFragment extends Fragment implements
-        TextWatcher {
+                                                  TextWatcher {
 
     @BindView(R.id.room_display_send_transaction_btn)
     LinearLayout mSendBtn;
@@ -71,7 +70,7 @@ public class RoomDisplayFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         mPresenter = new RoomDisplayFragmentPresenter(
                 (MainActivity) this.getActivity(),
                 this,
@@ -87,8 +86,8 @@ public class RoomDisplayFragment extends Fragment implements
 
         mRoomDisplayUserListAdapter = new RoomDisplayUserListAdapter();
         mUserListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                LinearLayoutManager.HORIZONTAL,
-                false));
+                                                                       LinearLayoutManager.HORIZONTAL,
+                                                                       false));
         mUserListRecyclerView.setAdapter(mRoomDisplayUserListAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter);
@@ -133,16 +132,16 @@ public class RoomDisplayFragment extends Fragment implements
         mUserWelcome.setText(headerText);
     }
 
-    public void setUserListRecyclerView(Map<String, Integer> userListRecyclerView) {
-        ArrayList<RoomDisplayUserInfo> roomDisplayUserInfos = new ArrayList<>();
-        int maxValue = Collections.max(userListRecyclerView.values());
-        int max = Math.max(10, (int) Math.pow(10, Math.ceil(Math.log10(maxValue))));
-        for (Map.Entry<String, Integer> entry : userListRecyclerView.entrySet()) {
-            roomDisplayUserInfos.add(new RoomDisplayUserInfo(entry.getKey(),
-                    entry.getValue(),
-                    max));
+    public void setUserListRecyclerView(ArrayList<UserInfo> userListRecyclerView) {
+        int maxValue = 0;
+        for (int i = 0; i < userListRecyclerView.size(); i++) {
+            maxValue = Math.max(maxValue, userListRecyclerView.get(i).getBalance());
         }
-        mRoomDisplayUserListAdapter.update(roomDisplayUserInfos);
+        int max = Math.max(10, (int) Math.pow(10, Math.ceil(Math.log10(maxValue))));
+        for (int i = 0; i < userListRecyclerView.size(); i++) {
+            userListRecyclerView.get(i).setMaxBalance(max);
+        }
+        mRoomDisplayUserListAdapter.update(userListRecyclerView);
     }
 
     public void updateTransactionList(ArrayList<Transaction> list) {

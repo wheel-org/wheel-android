@@ -1,6 +1,6 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.data.RoomDisplayUserInfo;
+import org.wheel.expenses.data.UserInfo;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class RoomDisplayUserListAdapter
         extends RecyclerView.Adapter<RoomDisplayUserListItemViewHolder> {
-    private ArrayList<RoomDisplayUserInfo> mUserList;
+    private ArrayList<UserInfo> mUserList;
 
     public RoomDisplayUserListAdapter() {
         mUserList = new ArrayList<>();
@@ -34,7 +34,7 @@ public class RoomDisplayUserListAdapter
         return mUserList.size();
     }
 
-    public void update(ArrayList<RoomDisplayUserInfo> userList) {
+    public void update(ArrayList<UserInfo> userList) {
         mUserList.clear();
         mUserList.addAll(userList);
         notifyDataSetChanged();

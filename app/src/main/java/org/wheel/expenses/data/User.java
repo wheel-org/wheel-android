@@ -9,13 +9,14 @@ import java.util.ArrayList;
 public class User {
     private String mName;
     private String mUsername;
-    private String mProfilePictureUrl;
+    private String mProfilePicture;
     private ArrayList<RoomInfo> mActiveRooms;
 
     public User(JSONObject object) {
         try {
             mUsername = object.getString("username");
             mName = object.getString("name");
+            mProfilePicture = object.getString("picture");
             JSONArray rooms = object.getJSONArray("rooms");
             mActiveRooms = new ArrayList<>();
             for (int i = 0; i < rooms.length(); i++) {
@@ -36,5 +37,13 @@ public class User {
 
     public ArrayList<RoomInfo> getActiveRooms() {
         return mActiveRooms;
+    }
+
+    public String getProfilePicture() {
+        return mProfilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        mProfilePicture = profilePicture;
     }
 }

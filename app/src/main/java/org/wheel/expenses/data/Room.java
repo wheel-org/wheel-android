@@ -5,11 +5,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Room {
-    private Map<String, Integer> mUsers;
+    private ArrayList<UserInfo> mUsers;
     private ArrayList<Transaction> mTransactions;
     private String mAdminUsername;
     private String mId;
@@ -25,11 +23,10 @@ public class Room {
                 mAdminUsername = "";
             }
             JSONArray userMap = jsonObject.getJSONArray("users");
-            mUsers = new HashMap<>();
+            mUsers = new ArrayList<>();
             mTransactions = new ArrayList<>();
             for (int i = 0; i < userMap.length(); i++) {
-                mUsers.put(userMap.getJSONObject(i).getString("user"),
-                           userMap.getJSONObject(i).getInt("balance"));
+                mUsers.add(new UserInfo(userMap.getJSONObject(i)));
             }
             JSONArray transactions = jsonObject.getJSONArray("transactions");
             for (int i = 0; i < transactions.length(); i++) {
@@ -41,7 +38,7 @@ public class Room {
         }
     }
 
-    public Map<String, Integer> getUsers() {
+    public ArrayList<UserInfo> getUsers() {
         return mUsers;
     }
 

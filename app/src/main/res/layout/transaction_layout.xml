@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:background="?android:attr/selectableItemBackground"
-    android:layout_height="wrap_content"
+    android:layout_height="64dp"
     android:orientation="horizontal">
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/userDisplay"
-        android:layout_width="63dp"
-        android:layout_height="63dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="8dp"
         app:srcCompat="@mipmap/felix_icon" />
 
     <TextView

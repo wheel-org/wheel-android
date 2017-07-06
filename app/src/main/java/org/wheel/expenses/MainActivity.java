@@ -1,9 +1,14 @@
 package org.wheel.expenses;
 
-import static android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_OPEN;
-import static android.support.v4.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
+import org.wheel.expenses.data.RoomInfo;
+import org.wheel.expenses.util.RecyclerViewUtil;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,16 +22,18 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import org.wheel.expenses.data.RoomInfo;
-import org.wheel.expenses.util.RecyclerViewUtil;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.support.v4.widget.DrawerLayout.LOCK_MODE_LOCKED_OPEN;
+import static android.support.v4.widget.DrawerLayout.LOCK_MODE_UNLOCKED;
+import static org.wheel.expenses.util.WheelUtil.setUserProfilePicture;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.drawer_join_room_btn)
     LinearLayout mJoinRoomButton;
+
+    @BindView(R.id.drawer_profile_image)
+    ImageView mProfilePicture;
 
     @BindView(R.id.drawer_log_out_btn)
     LinearLayout mLogoutBtn;
@@ -81,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mIsDrawerLocked = false;
 
+    private final static int RESULT_SELECT_IMAGE = 100;
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
@@ -100,17 +112,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         mPresenter = new MainActivityPresenter(this,
-                WheelClient.getInstance(),
-                WheelAPI.getInstance(),
-                StoredPreferencesManager.getInstance());
+                                               WheelClient.getInstance(),
+                                               WheelAPI.getInstance(),
+                                               StoredPreferencesManager.getInstance());
 
         setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_open_drawer);
         showLargeDrawer();
         setProgressBarIndeterminateVisibility(false);
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer,
-                R.string.drawer_open,
-                R.string.drawer_close) {
+                                                  R.string.drawer_open,
+                                                  R.string.drawer_close) {
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
             }
@@ -129,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
             closeDrawerIfNotLocked();
         });
         mUserRowItem.setOnClickListener(view -> {
+            openChangeProfilePictureDialog();
             closeDrawerIfNotLocked();
         });
         mLogoutBtn.setOnClickListener(view -> {
@@ -144,6 +157,40 @@ public class MainActivity extends AppCompatActivity {
         mPresenter.onCreate();
     }
 
+    private void openChangeProfilePictureDialog() {
+        try {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,
+                                                        "Select Picture"), RESULT_SELECT_IMAGE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case RESULT_SELECT_IMAGE:
+
+                if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+                    try {
+                        Uri selectedImageUri = data.getData();
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                                                                          selectedImageUri);
+                        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 64, 64, false);
+                        bitmap.recycle();
+                        mPresenter.updateUserImage(scaled);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+        }
+    }
 
     public void updateDrawerList(ArrayList<RoomInfo> list) {
         mDrawerListAdapter.update(list);
@@ -193,7 +240,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void closeDrawerIfNotLocked() {
-        if (!mIsDrawerLocked) mDrawer.closeDrawers();
+        if (!mIsDrawerLocked) {
+            mDrawer.closeDrawers();
+        }
     }
 
     public void hideRoomFragment() {
@@ -207,5 +256,9 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showLargeDrawer();
         }
+    }
+
+    public void setDrawerPicture(String drawerPicture) {
+        setUserProfilePicture(mProfilePicture, drawerPicture);
     }
 }

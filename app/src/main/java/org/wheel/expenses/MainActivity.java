@@ -1,5 +1,8 @@
 package org.wheel.expenses;
 
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 import org.wheel.expenses.data.RoomInfo;
 import org.wheel.expenses.util.RecyclerViewUtil;
 
@@ -158,37 +161,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openChangeProfilePictureDialog() {
-        try {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                                                        "Select Picture"), RESULT_SELECT_IMAGE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                                                    "Select Picture"), RESULT_SELECT_IMAGE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        switch (requestCode) {
-            case RESULT_SELECT_IMAGE:
-
-                if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
-                    try {
-                        Uri selectedImageUri = data.getData();
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
-                                                                          selectedImageUri);
-                        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 64, 64, false);
-                        bitmap.recycle();
-                        mPresenter.updateUserImage(scaled);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+        if (requestCode == RESULT_SELECT_IMAGE) {
+            if (resultCode == Activity.RESULT_OK && data != null && data.getData() != null) {
+                Uri selectedImageUri = data.getData();
+                CropImage.activity(selectedImageUri)
+                         .setGuidelines(CropImageView.Guidelines.ON)
+                         .setInitialCropWindowPaddingRatio(0)
+                         .setFixAspectRatio(true)
+                         .setAspectRatio(1, 1)
+                         .setRequestedSize(64, 64, CropImageView.RequestSizeOptions.RESIZE_INSIDE)
+                         .start(this);
+            }
+        } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            try {
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),
+                                                                      resultUri);
+                    mPresenter.updateUserImage(bitmap);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    throw result.getError();
                 }
-                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

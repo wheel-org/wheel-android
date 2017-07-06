@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                          .setInitialCropWindowPaddingRatio(0)
                          .setFixAspectRatio(true)
                          .setAspectRatio(1, 1)
-                         .setRequestedSize(64, 64, CropImageView.RequestSizeOptions.RESIZE_INSIDE)
+                         .setRequestedSize(256, 256, CropImageView.RequestSizeOptions.RESIZE_INSIDE)
                          .start(this);
             }
         } else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {

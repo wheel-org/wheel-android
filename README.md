@@ -1,2 +1,3 @@
-# expenses
-for mkim and i
+# Wheel Android Client
+
+Android client for Wheel, the expenses tracking app.

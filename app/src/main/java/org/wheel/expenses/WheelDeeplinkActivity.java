@@ -16,10 +16,14 @@ public class WheelDeeplinkActivity extends Activity {
 
         Intent intent = getIntent();
         Uri data = intent.getData();
-
+        
+        String dataString = data.getPath().replaceAll("/", "");
+        dataString = dataString.replaceAll("wheel:", "");
+        dataString = dataString.replaceAll("room", "");
+        
         Intent mIntent = new Intent(this, SplashScreenActivity.class);
         mIntent.putExtra(KEY_ACTION, data.getHost());
-        mIntent.putExtra(KEY_DATA, data.getPath().replaceAll("/", ""));
+        mIntent.putExtra(KEY_DATA, dataString);
         startActivity(mIntent);
         finish();
     }

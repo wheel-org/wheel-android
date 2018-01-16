@@ -21,6 +21,7 @@ class RegisterActivityPresenter implements ActivityLifecycleHandler {
         mStoredPreferencesManager = storedPreferencesManager;
         mWheelAPI = wheelAPI;
         mWheelClient = wheelClient;
+        mRegisterActivity.disableRegisterBtn();
     }
 
     @Override

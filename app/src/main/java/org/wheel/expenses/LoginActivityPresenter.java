@@ -22,6 +22,7 @@ public class LoginActivityPresenter implements ActivityLifecycleHandler {
         mStoredPreferencesManager = storedPreferencesManager;
         mWheelAPI = wheelAPI;
         mWheelClient = wheelClient;
+        mLoginActivity.disableLoginButton();
     }
 
     @Override
@@ -33,7 +34,7 @@ public class LoginActivityPresenter implements ActivityLifecycleHandler {
     }
 
     public void onLoginClicked() {
-        HashMap<String, String> params = new HashMap<String, String>();
+        HashMap<String, String> params = new HashMap<>();
         final String username = mLoginActivity.getUsernameText();
         final String password = WheelUtil.hashPassword(mLoginActivity.getPasswordText());
         params.put("username", username);

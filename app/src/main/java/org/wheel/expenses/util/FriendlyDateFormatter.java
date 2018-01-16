@@ -21,6 +21,8 @@ public class FriendlyDateFormatter {
 
         Date now = new Date();
         long diff = now.getTime() - date.getTime();
+        long dayDiff = diff / (1000 * 60 * 60 * 24);
+
         diff /= 1000;
         if (diff < 60) {
             return JUST_NOW;
@@ -30,11 +32,11 @@ public class FriendlyDateFormatter {
         } else if (diff < 3600 * 24) {
             int output = Math.round(diff / 3600);
             return String.format(output == 1 ? HOUR : HOURS, output);
-        } else if (diff < 3600 * 24 * 2) {
+        } else if (dayDiff > 0 && dayDiff < 2) {
             return String.format(YESTERDAY, timeFormat.format(date));
-        } else if (diff < 3600 * 24 * 7) {
+        } else if (dayDiff < 7) {
             return thisWeekFormat.format(date);
-        } else if (diff < 3600 * 24 * 7 * 2) {
+        } else if (diff < 14) {
             return lastWeekFormat.format(date);
         } else {
             return fullDateFormat.format(date);

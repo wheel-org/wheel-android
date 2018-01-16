@@ -38,6 +38,12 @@ public abstract class AutoDiffAdapter<VH extends RecyclerView.ViewHolder, T exte
         addNew(newDataSet);
     }
 
+    public void updateAll(ArrayList<T> newDataSet) {
+        mDataSet.clear();
+        mDataSet.addAll(newDataSet);
+        notifyDataSetChanged();
+    }
+
     private void addNew(ArrayList<T> newDataSet) {
         // All not matching removed.
         int origIndex = 0;

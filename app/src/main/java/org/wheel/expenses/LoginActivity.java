@@ -3,6 +3,8 @@ package org.wheel.expenses;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -10,7 +12,7 @@ import android.widget.EditText;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements TextWatcher {
 
     @BindView(R.id.login_save_details_checkbox)
     CheckBox mSaveDetails;
@@ -36,8 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void GoToRegister() {
-        Intent intent = new Intent(getApplicationContext(),
-                RegisterActivity.class);
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivityForResult(intent, 0);
     }
 
@@ -52,6 +53,9 @@ public class LoginActivity extends AppCompatActivity {
         mGoToRegister.setOnClickListener((v) -> GoToRegister());
         mLogInBtn.setOnClickListener((v) -> mPresenter.onLoginClicked());
         mPresenter.onCreate();
+        disableLoginButton();
+        mUsername.addTextChangedListener(this);
+        mPassword.addTextChangedListener(this);
     }
 
     public void disableLoginButton() {
@@ -85,6 +89,26 @@ public class LoginActivity extends AppCompatActivity {
             GoToMain();
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        if (!getUsernameText().isEmpty() && !getPasswordText().isEmpty()) {
+            enableLoginButton();
+        }
+        else {
+            disableLoginButton();
+        }
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }
 

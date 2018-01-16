@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity {
         mLoadingRefreshLayout.setOnRefreshListener(() -> mPresenter.loadFailedRefreshTryAgain());
         mDrawerRefreshLayout.setOnRefreshListener(() -> mPresenter.updateActivity());
         mPresenter.onCreate();
+
     }
 
     private void openChangeProfilePictureDialog() {
@@ -239,11 +240,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showSmallDrawer() {
-        mIsDrawerLocked = false;
-        mNavigationView.setLayoutParams(new DrawerLayout.LayoutParams(
-                DrawerLayout.LayoutParams.WRAP_CONTENT,
-                DrawerLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT));
-        mDrawer.setDrawerLockMode(LOCK_MODE_UNLOCKED);
+        if (mDrawer.getDrawerLockMode(Gravity.LEFT) != LOCK_MODE_UNLOCKED) {
+            mIsDrawerLocked = false;
+            mNavigationView.setLayoutParams(new DrawerLayout.LayoutParams(
+                    DrawerLayout.LayoutParams.WRAP_CONTENT,
+                    DrawerLayout.LayoutParams.WRAP_CONTENT, Gravity.LEFT));
+            mDrawer.setDrawerLockMode(LOCK_MODE_UNLOCKED);
+        }
     }
 
     public void closeDrawerIfNotLocked() {
@@ -260,7 +263,11 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (mIsDrawerLocked) {
             super.onBackPressed();
-        } else {
+        }
+        else if (mDrawer.isDrawerOpen(Gravity.LEFT)) {
+            closeDrawerIfNotLocked();
+        }
+        else {
             showLargeDrawer();
         }
     }

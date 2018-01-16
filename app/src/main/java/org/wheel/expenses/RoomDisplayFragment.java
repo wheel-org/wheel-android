@@ -1,18 +1,12 @@
 package org.wheel.expenses;
 
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.data.Transaction;
-import org.wheel.expenses.data.UserInfo;
-import org.wheel.expenses.util.RecyclerViewUtil;
-import org.wheel.expenses.util.WheelUtil;
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,16 +14,20 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.data.Transaction;
+import org.wheel.expenses.data.UserInfo;
+import org.wheel.expenses.util.RecyclerViewUtil;
+import org.wheel.expenses.util.WheelUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.view.KeyEvent.KEYCODE_DEL;
-
 public class RoomDisplayFragment extends Fragment implements
-                                                  TextWatcher {
+        TextWatcher {
 
     @BindView(R.id.room_display_send_transaction_btn)
     LinearLayout mSendBtn;
@@ -66,11 +64,11 @@ public class RoomDisplayFragment extends Fragment implements
 
     private RoomDisplayFragmentPresenter mPresenter;
     private Room mRoomToDisplay;
-    private StringBuilder mPriceInputText = new StringBuilder();
+    private String mCurrentPriceString = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         mPresenter = new RoomDisplayFragmentPresenter(
                 (MainActivity) this.getActivity(),
                 this,
@@ -86,8 +84,8 @@ public class RoomDisplayFragment extends Fragment implements
 
         mRoomDisplayUserListAdapter = new RoomDisplayUserListAdapter();
         mUserListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
-                                                                       LinearLayoutManager.HORIZONTAL,
-                                                                       false));
+                LinearLayoutManager.HORIZONTAL,
+                false));
         mUserListRecyclerView.setAdapter(mRoomDisplayUserListAdapter);
 
         mSwipeRefreshLayout.setOnRefreshListener(mPresenter);
@@ -95,20 +93,6 @@ public class RoomDisplayFragment extends Fragment implements
         mLeaveRoom.setOnClickListener(view -> mPresenter.onLeaveRoomClicked());
         mShareBtn.setOnClickListener(view -> mPresenter.onShareLinkClicked());
         mPriceInput.setCursorVisible(false);
-        mPriceInput.setOnKeyListener((v1, keyCode, event) -> {
-            if (event.getAction() == KeyEvent.ACTION_DOWN) {
-                char uchar = (char) event.getUnicodeChar();
-                if (keyCode == KEYCODE_DEL && mPriceInputText.length() > 0) {
-                    mPriceInputText.deleteCharAt(mPriceInputText.length() - 1);
-                } else if (uchar >= '0' && uchar <= '9') {
-                    mPriceInputText.append(uchar);
-                }
-                int stripped = WheelUtil.getPriceFromString(mPriceInputText.toString());
-                String result = WheelUtil.getStringFromPrice(stripped);
-                mPriceInput.setText(result);
-            }
-            return true;
-        });
         mPriceInput.addTextChangedListener(this);
         mDescInput.addTextChangedListener(this);
         mSendBtn.setEnabled(false);
@@ -120,11 +104,11 @@ public class RoomDisplayFragment extends Fragment implements
         mRoomID.setText(s);
     }
 
-    public void setRoomToDisplay(Room roomToDisplay) {
+    public void setRoomToDisplay(Room roomToDisplay, boolean fullReload) {
         mRoomToDisplay = roomToDisplay;
 
         if (mPresenter != null) {
-            mPresenter.updateData();
+            mPresenter.updateData(fullReload);
         }
     }
 
@@ -144,13 +128,17 @@ public class RoomDisplayFragment extends Fragment implements
         mRoomDisplayUserListAdapter.update(userListRecyclerView);
     }
 
-    public void updateTransactionList(ArrayList<Transaction> list) {
+    public void updateTransactionList(ArrayList<Transaction> list, boolean fullReload) {
         Collections.sort(list, (t1, t2) -> t2.getDate().compareTo(t1.getDate()));
-        mTransactionListAdapter.update(list);
+        if (fullReload) {
+            mTransactionListAdapter.updateAll(list);
+        } else {
+            mTransactionListAdapter.update(list);
+        }
+        mTransactionsRecyclerView.post(() -> mTransactionsRecyclerView.smoothScrollToPosition(0));
     }
 
     public void enableSendBtnAndTextboxes() {
-        mSendBtn.setEnabled(true);
         mPriceInput.setEnabled(true);
         mDescInput.setEnabled(true);
     }
@@ -179,12 +167,27 @@ public class RoomDisplayFragment extends Fragment implements
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        mPresenter.onTextChanged();
+        if (!s.toString().equals(mCurrentPriceString)) {
+            mPriceInput.removeTextChangedListener(this);
+
+            int stripped = WheelUtil.getPriceFromString(mPriceInput.getText().toString());
+            String result = "";
+            if (stripped != 0) {
+                result = WheelUtil.getStringFromPrice(stripped);
+            }
+
+            mCurrentPriceString = result;
+            mPriceInput.getText().clear();
+            mPriceInput.getText().setFilters(new InputFilter[]{});
+            mPriceInput.getText().append(result);
+
+            mPriceInput.addTextChangedListener(this);
+            mPresenter.onTextChanged();
+        }
     }
 
     @Override
@@ -194,7 +197,6 @@ public class RoomDisplayFragment extends Fragment implements
 
     public void resetTextFields() {
         mDescInput.setText("");
-        mPriceInputText.setLength(0);
         mPriceInput.setText("");
         mDescInput.clearFocus();
         mPriceInput.clearFocus();

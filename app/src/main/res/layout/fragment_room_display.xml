@@ -27,7 +27,9 @@
                 android:layout_weight="1"
                 android:text="Intro"
                 android:textSize="24sp"
-                android:textStyle="normal|bold" />
+                android:textStyle="normal|bold"
+                android:maxLines="1"
+                android:ellipsize="marquee"/>
 
             <TextView
                 android:id="@+id/room_display_id"
@@ -170,7 +172,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/room_display_past_transactions"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

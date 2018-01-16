@@ -34,16 +34,17 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
     @Override
     public void onCreate() {
-        updateData();
+        // Called from Refresh
+        updateData(false);
     }
 
-    public void updateData() {
+    public void updateData(boolean fullReload) {
         mFragment.setRoomHeaderText(mWheelClient.getCurrentRoom().getName());
         ArrayList<UserInfo> users = mWheelClient.getCurrentRoom().getUsers();
         mFragment.setUserListRecyclerView(users);
 
         ArrayList<Transaction> transactions = mWheelClient.getCurrentRoom().getTransactions();
-        mFragment.updateTransactionList(transactions);
+        mFragment.updateTransactionList(transactions, fullReload);
         mFragment.setIdDisplayString(
                 String.format(mFragment.getString(R.string.room_display_id_display),
                         mWheelClient.getCurrentRoom().getId()));

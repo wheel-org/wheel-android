@@ -7,7 +7,6 @@
     tools:context="org.wheel.expenses.RegisterActivity">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
@@ -80,7 +79,8 @@
             android:layout_marginTop="16dp"
             android:onClick="RegisterClick"
             android:text="Make my account!"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:theme="@style/WheelTheme.Button" />
 
         <Button
             android:id="@+id/register_goto_login"
@@ -89,6 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Already have an account?"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:theme="@style/WheelTheme.Button" />
     </LinearLayout>
 </ScrollView>

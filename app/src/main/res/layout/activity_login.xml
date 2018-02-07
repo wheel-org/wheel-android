@@ -59,7 +59,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Sign In"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:theme="@style/WheelTheme.Button" />
 
         <Button
             android:id="@+id/login_goto_register"
@@ -67,7 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Make an account!"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:theme="@style/WheelTheme.Button" />
 
     </LinearLayout>
 

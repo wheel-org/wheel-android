@@ -24,18 +24,16 @@
                 android:id="@+id/room_display_intro_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Intro"
+                android:ellipsize="marquee"
+                android:singleLine="true"
                 android:textSize="24sp"
                 android:textStyle="normal|bold"
-                android:maxLines="1"
-                android:ellipsize="marquee"/>
+                tools:text="Intro" />
 
             <TextView
                 android:id="@+id/room_display_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:textSize="14sp"
                 tools:text="12345" />
 
@@ -49,6 +47,7 @@
             android:layout_height="80dp"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical|center"
             android:orientation="horizontal">
 
@@ -70,6 +69,7 @@
             android:layout_height="80dp"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true"
+            android:focusable="true"
             android:gravity="center_vertical|center"
             android:orientation="horizontal">
 
@@ -89,10 +89,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/room_display_user_list"
         android:layout_width="match_parent"
-        android:layout_height="120dp">
-
-    </android.support.v7.widget.RecyclerView>
-
+        android:layout_height="120dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -112,17 +109,10 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:background="@color/transparent"
-                android:ellipsize="end"
-                android:ems="10"
                 android:hint="$0.00"
                 android:inputType="numberDecimal"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp"
-                android:singleLine="true"
                 android:textAlignment="textEnd"
-                android:textColor="@android:color/black"
-                android:textStyle="normal|bold" />
+                android:theme="@style/WheelTheme.TextBox" />
 
             <include layout="@layout/vertical_divider" />
 
@@ -131,12 +121,9 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@color/transparent"
-                android:ems="10"
                 android:hint="Uber"
                 android:inputType="textCapSentences"
-                android:paddingEnd="8dp"
-                android:paddingStart="8dp" />
+                android:theme="@style/WheelTheme.TextBox" />
 
             <include layout="@layout/vertical_divider" />
 
@@ -146,6 +133,7 @@
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
                 android:clickable="true"
+                android:focusable="true"
                 android:gravity="center_vertical|center"
                 android:orientation="horizontal">
 
@@ -173,7 +161,7 @@
             android:id="@+id/room_display_past_transactions"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"/>
+            android:scrollbars="vertical" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 

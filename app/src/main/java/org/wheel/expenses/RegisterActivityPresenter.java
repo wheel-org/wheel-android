@@ -1,25 +1,26 @@
 package org.wheel.expenses;
 
 import org.json.JSONObject;
+import org.wheel.expenses.data.User;
 import org.wheel.expenses.util.ErrorMessage;
 import org.wheel.expenses.util.WheelUtil;
-import org.wheel.expenses.data.User;
 
 import java.util.HashMap;
 
 class RegisterActivityPresenter implements ActivityLifecycleHandler {
     private RegisterActivity mRegisterActivity;
     private StoredPreferencesManager mStoredPreferencesManager;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
     private WheelClient mWheelClient;
 
     public RegisterActivityPresenter(RegisterActivity registerActivity,
-            StoredPreferencesManager storedPreferencesManager, WheelAPI wheelAPI,
-            WheelClient wheelClient) {
+                                     StoredPreferencesManager storedPreferencesManager,
+                                     WheelApi wheelApi,
+                                     WheelClient wheelClient) {
 
         mRegisterActivity = registerActivity;
         mStoredPreferencesManager = storedPreferencesManager;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
         mWheelClient = wheelClient;
         mRegisterActivity.disableRegisterBtn();
     }
@@ -31,9 +32,9 @@ class RegisterActivityPresenter implements ActivityLifecycleHandler {
 
     private boolean isAnyFieldEmpty() {
         return mRegisterActivity.getFullName().isEmpty() ||
-                mRegisterActivity.getUsername().isEmpty() ||
-                mRegisterActivity.getPassword().isEmpty() ||
-                mRegisterActivity.getPasswordAgain().isEmpty();
+               mRegisterActivity.getUsername().isEmpty() ||
+               mRegisterActivity.getPassword().isEmpty() ||
+               mRegisterActivity.getPasswordAgain().isEmpty();
     }
 
     private boolean isPasswordsMatching() {
@@ -69,29 +70,24 @@ class RegisterActivityPresenter implements ActivityLifecycleHandler {
             params.put("username", username);
             params.put("password", password);
             params.put("name", fullName);
-            mWheelAPI.makeApiRequest(WheelAPI.ApiCall.UserRegister,
-                    params, new WheelAPI.WheelAPIListener() {
+            mWheelApi.makeApiRequest(WheelApi.ApiCall.UserRegister,
+                                     params, new WheelApi.WheelAPIListener() {
                         @Override
                         public void onError(int errorCode) {
-                            mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                            mWheelApi.ShowToast(mRegisterActivity, ErrorMessage.from(errorCode));
                         }
 
                         @Override
                         public void onSuccess(JSONObject response) {
-                            if (mRegisterActivity.isSaveDetailsChecked()) {
-                                mStoredPreferencesManager.setSavedUsername(username);
-                                mStoredPreferencesManager.setSavedPassword(password);
-                            } else {
-                                mStoredPreferencesManager.setSavedUsername("");
-                                mStoredPreferencesManager.setSavedPassword("");
-                            }
+                            mStoredPreferencesManager.setSavedUsername(username);
+                            mStoredPreferencesManager.setSavedPassword(password);
                             mWheelClient.setCurrentUser(new User(response), password);
                             mRegisterActivity.onRegisterComplete();
                         }
 
                         @Override
                         public void onConnectionError() {
-                            mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                            mWheelApi.ShowToast(mRegisterActivity, WheelApi.CONNECTION_FAIL);
                         }
                     });
         }

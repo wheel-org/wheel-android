@@ -10,14 +10,14 @@ import java.util.Map;
 public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler {
     private JoinRoomDialogFragment mFragment;
     private WheelClient mWheelClient;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
     private JoinRoomDialogFragment.JoinRoomDialogFragmentListener mListener;
 
     public JoinRoomDialogFragmentPresenter(JoinRoomDialogFragment createRoomDialogFragment,
-                                           WheelClient wheelClient, WheelAPI wheelAPI) {
+                                           WheelClient wheelClient, WheelApi wheelApi) {
         mFragment = createRoomDialogFragment;
         mWheelClient = wheelClient;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
     }
 
     public void onJoinRoomClicked(String roomId, String roomPassword) {
@@ -27,12 +27,12 @@ public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler
         params.put("id", roomId);
         params.put("roomPassword", roomPassword);
         mFragment.disableButtons();
-        mWheelAPI.makeApiRequest(
-                WheelAPI.ApiCall.RoomJoin, params,
-                new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(
+                WheelApi.ApiCall.RoomJoin, params,
+                new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                         mFragment.enableButtons();
                     }
 
@@ -45,7 +45,7 @@ public class JoinRoomDialogFragmentPresenter implements ActivityLifecycleHandler
 
                     @Override
                     public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                         mFragment.enableButtons();
                     }
                 });

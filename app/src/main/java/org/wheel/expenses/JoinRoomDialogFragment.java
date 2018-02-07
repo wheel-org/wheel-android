@@ -34,7 +34,7 @@ public class JoinRoomDialogFragment extends DialogFragment {
 
     public JoinRoomDialogFragment() {
         mPresenter = new JoinRoomDialogFragmentPresenter(this, WheelClient.getInstance(),
-                WheelAPI.getInstance());
+                                                         WheelApi.getInstance());
     }
 
     @Override

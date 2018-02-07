@@ -6,7 +6,14 @@ import com.android.volley.Request;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpTrace;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -14,10 +21,6 @@ import org.apache.http.params.HttpParams;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-
-/**
- * Created by Felix on 5/7/2017.
- */
 
 public class WheelHttpClientStack extends com.android.volley.toolbox.HttpClientStack {
     private final static String HEADER_CONTENT_TYPE = "Content-Type";
@@ -48,7 +51,9 @@ public class WheelHttpClientStack extends com.android.volley.toolbox.HttpClientS
         }
     }
 
-    static HttpUriRequest createHttpRequest(Request<?> request, Map<String, String> additionalHeaders) throws AuthFailureError {
+    static HttpUriRequest createHttpRequest(Request<?> request,
+                                            Map<String, String> additionalHeaders)
+            throws AuthFailureError {
         switch (request.getMethod()) {
             case Request.Method.DEPRECATED_GET_OR_POST: {
                 byte[] postBody = request.getPostBody();
@@ -66,7 +71,7 @@ public class WheelHttpClientStack extends com.android.volley.toolbox.HttpClientS
             case Request.Method.GET:
                 return new HttpGet(request.getUrl());
             case Request.Method.DELETE:
-                WheelHttpDelete deleteRequest =  new WheelHttpDelete(request.getUrl());
+                WheelHttpDelete deleteRequest = new WheelHttpDelete(request.getUrl());
                 deleteRequest.addHeader(HEADER_CONTENT_TYPE, request.getBodyContentType());
                 setEntityIfNonEmptyBody(deleteRequest, request);
                 return deleteRequest;

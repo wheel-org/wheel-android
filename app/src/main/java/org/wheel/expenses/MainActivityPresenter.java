@@ -1,13 +1,13 @@
 package org.wheel.expenses;
 
+import org.json.JSONObject;
+import org.wheel.expenses.data.Room;
+import org.wheel.expenses.util.ErrorMessage;
+
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Base64;
-
-import org.json.JSONObject;
-import org.wheel.expenses.data.Room;
-import org.wheel.expenses.util.ErrorMessage;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivityPresenter implements ActivityLifecycleHandler,
-        CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
-        JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
+                                              CreateRoomDialogFragment.CreateRoomDialogFragmentListener,
+                                              JoinRoomDialogFragment.JoinRoomDialogFragmentListener {
 
     private MainActivity mActivity;
     private WheelClient mWheelClient;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
     private StoredPreferencesManager mStoredPreferencesManager;
     private String mLastLoadedRoomID;
 
@@ -29,13 +29,13 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     private boolean mLoadLock;
 
     public MainActivityPresenter(MainActivity activity,
-            WheelClient wheelClient,
-            WheelAPI wheelAPI,
-            StoredPreferencesManager storedPreferencesManager) {
+                                 WheelClient wheelClient,
+                                 WheelApi wheelApi,
+                                 StoredPreferencesManager storedPreferencesManager) {
 
         mActivity = activity;
         mWheelClient = wheelClient;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
         mStoredPreferencesManager = storedPreferencesManager;
     }
 
@@ -73,11 +73,11 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         params.put("username", mWheelClient.getCurrentUsername());
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", roomID);
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.RoomRequest,
-                params, new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.RoomRequest,
+                                 params, new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mActivity, ErrorMessage.from(errorCode));
                         mLoadLock = false;
                     }
 
@@ -105,10 +105,10 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     }
 
     public void updateActivity() {
-        mWheelClient.updateCurrentUser(new WheelAPI.WheelAPIListener() {
+        mWheelClient.updateCurrentUser(new WheelApi.WheelAPIListener() {
             @Override
             public void onError(int errorCode) {
-                mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                mWheelApi.ShowToast(mActivity, ErrorMessage.from(errorCode));
                 mActivity.setDrawerRefreshing(false);
             }
 
@@ -120,7 +120,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
             @Override
             public void onConnectionError() {
-                mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                mWheelApi.ShowToast(mActivity, WheelApi.CONNECTION_FAIL);
                 mActivity.setDrawerRefreshing(false);
             }
         });
@@ -128,8 +128,8 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
 
     private void updateTextActivity() {
         mActivity.setDrawerText(mWheelClient.getCurrentUser().getName(),
-                mActivity.getString(R.string.drawer_logged_in,
-                        mWheelClient.getCurrentUser().getUsername()));
+                                mActivity.getString(R.string.drawer_logged_in,
+                                                    mWheelClient.getCurrentUser().getUsername()));
         mActivity.updateDrawerList(mWheelClient.getCurrentUser().getActiveRooms());
         mActivity.setDrawerPicture(mWheelClient.getCurrentUser().getProfilePicture());
     }
@@ -139,7 +139,7 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         updateTextActivity();
         if (mWheelClient.getWheelDeeplinkBundle() != null) {
             if (mWheelClient.getWheelDeeplinkBundle().getAction()
-                    == WheelDeeplinkBundle.Actions.ROOM) {
+                == WheelDeeplinkBundle.Actions.ROOM) {
                 String roomID = mWheelClient.getWheelDeeplinkBundle().getData();
                 if (!mWheelClient.userInRoom(roomID)) {
                     onJoinRoomClickedWithParam(roomID);
@@ -179,9 +179,9 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
     public void hideRoomFragment() {
         if (mDisplayedFragment != null) {
             mActivity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(mDisplayedFragment)
-                    .commit();
+                     .beginTransaction()
+                     .remove(mDisplayedFragment)
+                     .commit();
             mDisplayedFragment = null;
         }
         mActivity.showLargeDrawer();
@@ -200,42 +200,48 @@ public class MainActivityPresenter implements ActivityLifecycleHandler,
         params.put("username", mWheelClient.getCurrentUsername());
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("picture", encoded);
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.UpdatePicture,
-                params,
-                new WheelAPI.WheelAPIListener() {
-                    @Override
-                    public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
-                    }
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.UpdatePicture,
+                                 params,
+                                 new WheelApi.WheelAPIListener() {
+                                     @Override
+                                     public void onError(int errorCode) {
+                                         mWheelApi.ShowToast(mActivity,
+                                                             ErrorMessage.from(errorCode));
+                                     }
 
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        mWheelClient.updatePicture(encoded);
-                        updateActivity();
-                        mWheelClient.updateCurrentRoom(
-                                new WheelAPI.WheelAPIListener() {
-                                    @Override
-                                    public void onError(int errorCode) {
-                                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
-                                    }
+                                     @Override
+                                     public void onSuccess(JSONObject response) {
+                                         mWheelClient.updatePicture(encoded);
+                                         updateActivity();
+                                         mWheelClient.updateCurrentRoom(
+                                                 new WheelApi.WheelAPIListener() {
+                                                     @Override
+                                                     public void onError(int errorCode) {
+                                                         mWheelApi.ShowToast(mActivity,
+                                                                             ErrorMessage.from(
+                                                                                     errorCode));
+                                                     }
 
-                                    @Override
-                                    public void onSuccess(JSONObject response) {
-                                        mWheelClient.setCurrentRoom(new Room(response));
-                                        updateRoomFragment(true);
-                                    }
+                                                     @Override
+                                                     public void onSuccess(JSONObject response) {
+                                                         mWheelClient.setCurrentRoom(new Room(
+                                                                 response));
+                                                         updateRoomFragment(true);
+                                                     }
 
-                                    @Override
-                                    public void onConnectionError() {
-                                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
-                                    }
-                                });
-                    }
+                                                     @Override
+                                                     public void onConnectionError() {
+                                                         mWheelApi.ShowToast(mActivity,
+                                                                             WheelApi.CONNECTION_FAIL);
+                                                     }
+                                                 });
+                                     }
 
-                    @Override
-                    public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
-                    }
-                });
+                                     @Override
+                                     public void onConnectionError() {
+                                         mWheelApi.ShowToast(mActivity,
+                                                             WheelApi.CONNECTION_FAIL);
+                                     }
+                                 });
     }
 }

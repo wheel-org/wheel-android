@@ -6,16 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LoginActivity extends AppCompatActivity implements TextWatcher {
-
-    @BindView(R.id.login_save_details_checkbox)
-    CheckBox mSaveDetails;
 
     @BindView(R.id.login_login_btn)
     Button mLogInBtn;
@@ -49,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements TextWatcher {
         ButterKnife.setDebug(true);
         ButterKnife.bind(this);
         mPresenter = new LoginActivityPresenter(this, StoredPreferencesManager.getInstance(),
-                WheelAPI.getInstance(), WheelClient.getInstance());
+                                                WheelApi.getInstance(), WheelClient.getInstance());
         mGoToRegister.setOnClickListener((v) -> GoToRegister());
         mLogInBtn.setOnClickListener((v) -> mPresenter.onLoginClicked());
         mPresenter.onCreate();
@@ -78,13 +74,9 @@ public class LoginActivity extends AppCompatActivity implements TextWatcher {
         return mPassword.getText().toString();
     }
 
-    public boolean isSaveDetailsChecked() {
-        return mSaveDetails.isChecked();
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
-            Intent data) {
+                                    Intent data) {
         if (WheelClient.getInstance().getCurrentUser() != null) {
             GoToMain();
         }
@@ -100,8 +92,7 @@ public class LoginActivity extends AppCompatActivity implements TextWatcher {
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
         if (!getUsernameText().isEmpty() && !getPasswordText().isEmpty()) {
             enableLoginButton();
-        }
-        else {
+        } else {
             disableLoginButton();
         }
     }

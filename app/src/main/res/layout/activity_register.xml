@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="org.wheel.expenses.RegisterActivity">
+
     <LinearLayout
 
         android:layout_width="match_parent"
@@ -19,9 +19,11 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="match_parent" android:layout_height="150dp"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
             android:foregroundTintMode="src_over"
-            app:srcCompat="@drawable/logo"/>
+            app:srcCompat="@drawable/logo" />
+
         <EditText
             android:id="@+id/register_full_name"
             android:layout_width="match_parent"
@@ -29,7 +31,7 @@
             android:fontFamily="sans-serif"
             android:hint="Full Name"
             android:inputType="text"
-            android:maxLines="1"/>
+            android:maxLines="1" />
 
         <EditText
             android:id="@+id/register_username"
@@ -38,7 +40,7 @@
             android:fontFamily="sans-serif"
             android:hint="Desired Username"
             android:inputType="text"
-            android:maxLines="1"/>
+            android:maxLines="1" />
 
 
         <EditText
@@ -49,7 +51,7 @@
             android:hint="Password"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
 
         <EditText
@@ -60,21 +62,15 @@
             android:hint="Password Again"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:singleLine="true"/>
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/register_potential_error"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="potentialError"
             android:textColor="@color/colorAccent"
-            android:textStyle="bold"/>
-
-        <CheckBox
-            android:id="@+id/register_save_details_checkbox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save my details and auto-login!"/>
+            android:textStyle="bold"
+            tools:text="potentialError" />
 
         <Button
             android:id="@+id/register_register_btn"
@@ -84,7 +80,7 @@
             android:layout_marginTop="16dp"
             android:onClick="RegisterClick"
             android:text="Make my account!"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/register_goto_login"
@@ -93,6 +89,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="Already have an account?"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
     </LinearLayout>
 </ScrollView>

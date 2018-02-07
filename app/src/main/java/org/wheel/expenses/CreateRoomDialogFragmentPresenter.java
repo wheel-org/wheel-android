@@ -10,14 +10,14 @@ import java.util.Map;
 public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandler {
     private CreateRoomDialogFragment mFragment;
     private WheelClient mWheelClient;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
     private CreateRoomDialogFragment.CreateRoomDialogFragmentListener mListener;
 
     public CreateRoomDialogFragmentPresenter(CreateRoomDialogFragment createRoomDialogFragment,
-                                             WheelClient wheelClient, WheelAPI wheelAPI) {
+                                             WheelClient wheelClient, WheelApi wheelApi) {
         mFragment = createRoomDialogFragment;
         mWheelClient = wheelClient;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
     }
 
     public void onCreateRoomClicked(String roomName, String roomPassword) {
@@ -27,12 +27,12 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("roomName", roomName);
         params.put("roomPassword", roomPassword);
-        mWheelAPI.makeApiRequest(
-                WheelAPI.ApiCall.RoomCreate, params,
-                new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(
+                WheelApi.ApiCall.RoomCreate, params,
+                new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                         mFragment.enableButtons();
                     }
 
@@ -45,7 +45,7 @@ public class CreateRoomDialogFragmentPresenter implements ActivityLifecycleHandl
 
                     @Override
                     public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                         mFragment.enableButtons();
                     }
                 });

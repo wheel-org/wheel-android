@@ -31,7 +31,7 @@ public class CreateRoomDialogFragment extends DialogFragment {
 
     public CreateRoomDialogFragment() {
         mPresenter = new CreateRoomDialogFragmentPresenter(this, WheelClient.getInstance(),
-                                                           WheelAPI.getInstance());
+                                                           WheelApi.getInstance());
     }
 
     @Override

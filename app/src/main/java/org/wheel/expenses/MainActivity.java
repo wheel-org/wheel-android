@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         mPresenter = new MainActivityPresenter(this,
                                                WheelClient.getInstance(),
-                                               WheelAPI.getInstance(),
+                                               WheelApi.getInstance(),
                                                StoredPreferencesManager.getInstance());
 
         setSupportActionBar(mToolbar);

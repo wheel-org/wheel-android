@@ -1,26 +1,26 @@
 package org.wheel.expenses;
 
 import org.json.JSONObject;
+import org.wheel.expenses.data.User;
 import org.wheel.expenses.util.ErrorMessage;
 import org.wheel.expenses.util.WheelUtil;
-import org.wheel.expenses.data.User;
 
 import java.util.HashMap;
 
 public class LoginActivityPresenter implements ActivityLifecycleHandler {
 
     private StoredPreferencesManager mStoredPreferencesManager;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
     private WheelClient mWheelClient;
     private LoginActivity mLoginActivity;
 
     public LoginActivityPresenter(LoginActivity loginActivity,
-            StoredPreferencesManager storedPreferencesManager,
-            WheelAPI wheelAPI,
-            WheelClient wheelClient) {
+                                  StoredPreferencesManager storedPreferencesManager,
+                                  WheelApi wheelApi,
+                                  WheelClient wheelClient) {
         mLoginActivity = loginActivity;
         mStoredPreferencesManager = storedPreferencesManager;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
         mWheelClient = wheelClient;
         mLoginActivity.disableLoginButton();
     }
@@ -40,33 +40,30 @@ public class LoginActivityPresenter implements ActivityLifecycleHandler {
         params.put("username", username);
         params.put("password", password);
         mLoginActivity.disableLoginButton();
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.UserAuth, params,
-                new WheelAPI.WheelAPIListener() {
-                    @Override
-                    public void onError(int errorCode) {
-                        mLoginActivity.enableLoginButton();
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
-                    }
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.UserAuth, params,
+                                 new WheelApi.WheelAPIListener() {
+                                     @Override
+                                     public void onError(int errorCode) {
+                                         mLoginActivity.enableLoginButton();
+                                         mWheelApi.ShowToast(mLoginActivity,
+                                                             ErrorMessage.from(errorCode));
+                                     }
 
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        if (mLoginActivity.isSaveDetailsChecked()) {
-                            mStoredPreferencesManager.setSavedUsername(username);
-                            mStoredPreferencesManager.setSavedPassword(password);
-                        } else {
-                            mStoredPreferencesManager.setSavedPassword("");
-                            mStoredPreferencesManager.setSavedUsername("");
-                        }
-                        mLoginActivity.enableLoginButton();
-                        mWheelClient.setCurrentUser(new User(response), password);
-                        mLoginActivity.GoToMain();
-                    }
+                                     @Override
+                                     public void onSuccess(JSONObject response) {
+                                         mStoredPreferencesManager.setSavedUsername(username);
+                                         mStoredPreferencesManager.setSavedPassword(password);
+                                         mLoginActivity.enableLoginButton();
+                                         mWheelClient.setCurrentUser(new User(response), password);
+                                         mLoginActivity.GoToMain();
+                                     }
 
-                    @Override
-                    public void onConnectionError() {
-                        mLoginActivity.enableLoginButton();
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
-                    }
-                });
+                                     @Override
+                                     public void onConnectionError() {
+                                         mLoginActivity.enableLoginButton();
+                                         mWheelApi.ShowToast(mLoginActivity,
+                                                             WheelApi.CONNECTION_FAIL);
+                                     }
+                                 });
     }
 }

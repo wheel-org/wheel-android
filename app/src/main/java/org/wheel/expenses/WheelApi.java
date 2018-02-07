@@ -2,7 +2,6 @@ package org.wheel.expenses;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -22,7 +21,7 @@ import java.util.Map;
 import static com.android.volley.Request.Method.POST;
 
 
-public class WheelAPI {
+public class WheelApi {
     static final String baseURL = "https://wheel-app.herokuapp.com";
 
     enum ApiCall {
@@ -51,35 +50,33 @@ public class WheelAPI {
             "Connection to server failed! Check your internet connection?";
     private RequestQueue requestQueue;
 
-    private static WheelAPI mInstance = null;
-    private Context mContext;
+    private static WheelApi mInstance = null;
 
-    public WheelAPI(Context c) {
-        mContext = c;
-        String userAgent = "volley/0";
-        try {
-            String packageName = mContext.getPackageName();
-            PackageInfo info = mContext.getPackageManager().getPackageInfo(
-                    packageName, 0);
-            userAgent = packageName + "/" + info.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-        }
-        HttpStack httpStack = new WheelHttpClientStack(
-                AndroidHttpClient.newInstance(userAgent));
-        requestQueue = Volley.newRequestQueue(mContext, httpStack);
+    public WheelApi(RequestQueue rq) {
+        requestQueue = rq;
     }
 
-    public static void initialize(Context c) {
+    public static void initialize(Context context) {
         if (mInstance == null) {
-            mInstance = new WheelAPI(c);
+            String userAgent = "volley/0";
+            try {
+                String packageName = context.getPackageName();
+                PackageInfo info = context.getPackageManager().getPackageInfo(
+                        packageName, 0);
+                userAgent = packageName + "/" + info.versionCode;
+            } catch (PackageManager.NameNotFoundException ignored) {
+            }
+            HttpStack httpStack = new WheelHttpClientStack(
+                    AndroidHttpClient.newInstance(userAgent));
+            mInstance = new WheelApi(Volley.newRequestQueue(context, httpStack));
         }
     }
 
-    public static WheelAPI getInstance() {
+    public static WheelApi getInstance() {
         return mInstance;
     }
 
-    public void makeApiRequest(WheelAPI.ApiCall callType,
+    public void makeApiRequest(WheelApi.ApiCall callType,
                                Map<String, String> parameters,
                                WheelAPIListener responseCallback) {
         String endPoint = baseURL + callType.getUrl();
@@ -114,25 +111,11 @@ public class WheelAPI {
 
     public Response.ErrorListener onError(
             final WheelAPIListener responseCallback) {
-        return new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                responseCallback.onConnectionError();
-            }
-        };
+        return error -> responseCallback.onConnectionError();
     }
 
-    public JSONObject getResponseData(JSONObject response) {
-        try {
-            return response.getJSONObject("data");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void ShowToast(String message) {
-        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+    public void ShowToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     public interface WheelAPIListener {

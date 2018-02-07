@@ -45,7 +45,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void tryStart() {
-        WheelAPI.initialize(getApplicationContext());
+        WheelApi.initialize(getApplicationContext());
         String storedUsername = StoredPreferencesManager.getInstance().getSavedUsername();
         final String storedPassword = StoredPreferencesManager.getInstance().getSavedPassword();
         Log.v("Splash", storedPassword);
@@ -54,8 +54,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             HashMap<String, String> params = new HashMap<>();
             params.put("username", storedUsername);
             params.put("password", storedPassword);
-            WheelAPI.getInstance().makeApiRequest(WheelAPI.ApiCall.UserAuth,
-                    params, new WheelAPI.WheelAPIListener() {
+            WheelApi.getInstance().makeApiRequest(WheelApi.ApiCall.UserAuth,
+                                                  params, new WheelApi.WheelAPIListener() {
                         @Override
                         public void onError(int errorCode) {
                             StoredPreferencesManager.getInstance().setSavedPassword("");

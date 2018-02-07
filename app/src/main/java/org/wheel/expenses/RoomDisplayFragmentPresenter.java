@@ -21,15 +21,15 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
     private RoomDisplayFragment mFragment;
     private MainActivity mMainActivity;
     private WheelClient mWheelClient;
-    private WheelAPI mWheelAPI;
+    private WheelApi mWheelApi;
 
     public RoomDisplayFragmentPresenter(MainActivity mainActivity,
             RoomDisplayFragment fragment,
-            WheelClient wheelClient, WheelAPI wheelAPI) {
+            WheelClient wheelClient, WheelApi wheelApi) {
         mMainActivity = mainActivity;
         mFragment = fragment;
         mWheelClient = wheelClient;
-        mWheelAPI = wheelAPI;
+        mWheelApi = wheelApi;
     }
 
     @Override
@@ -53,10 +53,10 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
     @Override
     public void onRefresh() {
-        mWheelClient.updateCurrentRoom(new WheelAPI.WheelAPIListener() {
+        mWheelClient.updateCurrentRoom(new WheelApi.WheelAPIListener() {
             @Override
             public void onError(int errorCode) {
-                mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                 mFragment.hideRefreshing();
             }
 
@@ -68,7 +68,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
             @Override
             public void onConnectionError() {
-                mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                 mFragment.hideRefreshing();
             }
         });
@@ -90,11 +90,11 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
         params.put("amount", String.valueOf(mFragment.getPriceInput()));
         params.put("desc", mFragment.getDescription());
         mFragment.disableSendBtnAndTextboxes();
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.AddTransaction, params,
-                new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.AddTransaction, params,
+                                 new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                         mFragment.enableSendBtnAndTextboxes();
                     }
 
@@ -108,7 +108,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
                     @Override
                     public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                         mFragment.enableSendBtnAndTextboxes();
                     }
                 });
@@ -116,7 +116,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
     public void promptDeleteTransaction(Transaction transaction) {
         if (!transaction.getUser().equals(mWheelClient.getCurrentUsername())) {
-            mWheelAPI.ShowToast(ErrorMessage.from(NOT_YOUR_TRANSACTION_ERROR));
+            mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(NOT_YOUR_TRANSACTION_ERROR));
             return;
         }
         AlertDialog al = new AlertDialog.Builder(mFragment.getActivity()).create();
@@ -139,11 +139,11 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
         params.put("roomid", mWheelClient.getCurrentRoom().getId());
         params.put("transid", transactionId);
         mFragment.disableTransactionListInteraction();
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.DeleteTransaction, params,
-                new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.DeleteTransaction, params,
+                                 new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                         mFragment.enableTransactionListInteraction();
                     }
 
@@ -157,7 +157,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
                     @Override
                     public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                         mFragment.enableTransactionListInteraction();
                     }
                 });
@@ -187,7 +187,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
         AlertDialog al = new AlertDialog.Builder(mFragment.getActivity()).create();
         al.setTitle(mFragment.getString(R.string.room_display_leave_room_title));
         al.setMessage(mFragment.getString(R.string.room_display_leave_room_user_message));
-        al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getContext()));
+        al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getActivity()));
         al.setButton(AlertDialog.BUTTON_POSITIVE, "Leave",
                 (dialogInterface, i) -> leaveRoom());
         al.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel",
@@ -201,11 +201,11 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
         params.put("password", mWheelClient.getCurrentPassword());
         params.put("id", mWheelClient.getCurrentRoom().getId());
         mMainActivity.showLoading();
-        mWheelAPI.makeApiRequest(WheelAPI.ApiCall.LeaveRoom, params,
-                new WheelAPI.WheelAPIListener() {
+        mWheelApi.makeApiRequest(WheelApi.ApiCall.LeaveRoom, params,
+                                 new WheelApi.WheelAPIListener() {
                     @Override
                     public void onError(int errorCode) {
-                        mWheelAPI.ShowToast(ErrorMessage.from(errorCode));
+                        mWheelApi.ShowToast(mFragment.getActivity(), ErrorMessage.from(errorCode));
                         mMainActivity.hideLoading();
                     }
 
@@ -218,7 +218,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
 
                     @Override
                     public void onConnectionError() {
-                        mWheelAPI.ShowToast(WheelAPI.CONNECTION_FAIL);
+                        mWheelApi.ShowToast(mFragment.getActivity(), WheelApi.CONNECTION_FAIL);
                         mMainActivity.hideLoading();
                     }
                 });
@@ -231,7 +231,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
             AlertDialog al = new AlertDialog.Builder(mFragment.getActivity()).create();
             al.setTitle("Are you sure?");
             al.setMessage("Leaving this room will delete it and all of the transactions associated with it!");
-            al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getContext()));
+            al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getActivity()));
 
             al.setButton(AlertDialog.BUTTON_POSITIVE, "Leave",
                     (dialogInterface, i) -> leaveRoom());
@@ -244,7 +244,7 @@ class RoomDisplayFragmentPresenter implements ActivityLifecycleHandler,
             AlertDialog al = new AlertDialog.Builder(mFragment.getActivity()).create();
             al.setTitle(mFragment.getString(R.string.room_display_admin_leave_room_error_title));
             al.setMessage(mFragment.getString(R.string.room_display_admin_leave_room_error_message));
-            al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getContext()));
+            al.setIcon(DrawableTinter.tintDrawable(R.drawable.ic_logout, mFragment.getActivity()));
             al.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
                     (dialogInterface, i) -> dialogInterface.dismiss());
             al.show();

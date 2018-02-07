@@ -73,7 +73,7 @@ public class RoomDisplayFragment extends Fragment implements
                 (MainActivity) this.getActivity(),
                 this,
                 WheelClient.getInstance(),
-                WheelAPI.getInstance());
+                WheelApi.getInstance());
         View v = inflater.inflate(R.layout.fragment_room_display, container, false);
         ButterKnife.bind(this, v);
 

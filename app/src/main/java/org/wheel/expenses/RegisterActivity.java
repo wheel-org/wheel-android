@@ -37,9 +37,6 @@ public class RegisterActivity extends AppCompatActivity implements TextWatcher {
     @BindView(R.id.register_register_btn)
     Button mRegisterBtn;
 
-    @BindView(R.id.register_save_details_checkbox)
-    CheckBox mSaveDetails;
-
     private RegisterActivityPresenter mPresenter;
 
     public String getFullName() {
@@ -56,10 +53,6 @@ public class RegisterActivity extends AppCompatActivity implements TextWatcher {
 
     public String getPasswordAgain() {
         return mPasswordAgain.getText().toString();
-    }
-
-    public boolean isSaveDetailsChecked() {
-        return mSaveDetails.isChecked();
     }
 
     public void showPotentialError() {
@@ -89,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity implements TextWatcher {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
         mPresenter = new RegisterActivityPresenter(this, StoredPreferencesManager.getInstance(),
-                WheelAPI.getInstance(), WheelClient.getInstance());
+                                                   WheelApi.getInstance(), WheelClient.getInstance());
 
         mPotentialError.setVisibility(View.GONE);
         mFullName.addTextChangedListener(this);
